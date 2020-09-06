@@ -8,9 +8,9 @@ import (
 
 func main() {
 	router := gin.Default()
-	router.StaticFS("/static", http.Dir("/jinli/html/static"))
-	router.StaticFile("/favicon.ico", "/jinli/html/favicon.ico")
-	router.StaticFile("/", "/jinli/html/index.html")
+	router.StaticFS("/static", http.Dir("./html/static"))
+	router.StaticFile("/favicon.ico", "./html/favicon.ico")
+	router.StaticFile("/", "./html/index.html")
 
 	v1 := router.Group("/v1")
 	{
