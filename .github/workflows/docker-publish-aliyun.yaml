@@ -20,6 +20,12 @@ jobs:
           node-version: 12.x
       - run: cd vue-admin && yarn
       - run: cd vue-admin && yarn build
+
+      - name: Go build
+        uses: actions/setup-go@v2.1.2
+        with:
+          go-version: 1.15
+      - run: go build
       
       - name: Dockerhub login
         env:
