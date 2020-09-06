@@ -18,9 +18,8 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: 12.x
-      - run: cd vue-admin
-      - run: yarn
-      - run: yarn build
+      - run: cd vue-admin && yarn
+      - run: cd vue-admin && yarn build
       
       - name: Dockerhub login
         env:
