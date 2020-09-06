@@ -9,4 +9,4 @@ COPY run.sh /run.sh
 RUN chmod +x /run.sh
 EXPOSE 9527
 WORKDIR /jinli
-CMD ["run.sh"]
+CMD ["/run.sh"]
