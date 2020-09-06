@@ -3,7 +3,7 @@ node_modules
 /dist
 /html/static
 /html/index.html
-
+/tmp/
 
 # local env files
 .env.local
