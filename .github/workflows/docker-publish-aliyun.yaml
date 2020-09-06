@@ -14,12 +14,14 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v1
       
+      - name: Node intsll
+        uses: actions/setup-node@v1
+        with:
+          node-version: 12.x
+          run: yarn
+
       - name: vue build
-      uses: actions/setup-node@v1
-      with:
-        node-version: 12.x
-      run: yarn
-      run: yarn build
+        run: yarn build
       
       - name: Dockerhub login
         env:
