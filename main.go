@@ -3,11 +3,13 @@ package main
 import (
 	"net/http"
 
+	"github.com/gin-contrib/gzip"
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
 	router := gin.Default()
+	router.Use(gzip.Gzip(gzip.DefaultCompression))
 	router.StaticFS("/static", http.Dir("./html/static"))
 	router.StaticFile("/favicon.ico", "./html/favicon.ico")
 	router.StaticFile("/", "./html/index.html")
