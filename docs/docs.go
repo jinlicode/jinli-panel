@@ -18,8 +18,12 @@ var doc = `{
     "info": {
         "description": "{{.Description}}",
         "title": "{{.Title}}",
+        "termsOfService": "https://github.com/jinlicode/jinli-panel",
         "contact": {},
-        "license": {},
+        "license": {
+            "name": "GNU v3",
+            "url": "https://github.com/jinlicode/jinli-panel/blob/master/LICENSE"
+        },
         "version": "{{.Version}}"
     },
     "host": "{{.Host}}",
@@ -38,12 +42,12 @@ type swaggerInfo struct {
 
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = swaggerInfo{
-	Version:     "",
+	Version:     "2.0",
 	Host:        "",
 	BasePath:    "",
 	Schemes:     []string{},
-	Title:       "",
-	Description: "",
+	Title:       "锦鲤管理面板",
+	Description: "锦鲤管理面板主打安全、可靠、性能调优。容器化管理",
 }
 
 type s struct{}

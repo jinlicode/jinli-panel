@@ -1,8 +1,15 @@
 {
     "swagger": "2.0",
     "info": {
+        "description": "锦鲤管理面板主打安全、可靠、性能调优。容器化管理",
+        "title": "锦鲤管理面板",
+        "termsOfService": "https://github.com/jinlicode/jinli-panel",
         "contact": {},
-        "license": {}
+        "license": {
+            "name": "GNU v3",
+            "url": "https://github.com/jinlicode/jinli-panel/blob/master/LICENSE"
+        },
+        "version": "2.0"
     },
     "paths": {}
 }

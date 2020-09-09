@@ -1,9 +1,10 @@
-module github.com/jinliconfig/jinli-panel
+module github.com/jinlicode/jinli-panel
 
 go 1.15
 
 require (
 	github.com/LyricTian/gzip v0.1.1
+	github.com/alecthomas/template v0.0.0-20190718012654-fb15b899a751
 	github.com/cosmtrek/air v1.21.2 // indirect
 	github.com/cpuguy83/go-md2man/v2 v2.0.0 // indirect
 	github.com/creack/pty v1.1.11 // indirect
@@ -19,7 +20,9 @@ require (
 	github.com/mailru/easyjson v0.7.6 // indirect
 	github.com/mattn/go-colorable v0.1.7 // indirect
 	github.com/pelletier/go-toml v1.8.0 // indirect
-	github.com/swaggo/swag v1.6.7 // indirect
+	github.com/swaggo/files v0.0.0-20190704085106-630677cd5c14
+	github.com/swaggo/gin-swagger v1.2.0
+	github.com/swaggo/swag v1.6.7
 	github.com/urfave/cli/v2 v2.2.0 // indirect
 	golang.org/x/net v0.0.0-20200904194848-62affa334b73 // indirect
 	golang.org/x/sys v0.0.0-20200909081042-eff7692f9009 // indirect
