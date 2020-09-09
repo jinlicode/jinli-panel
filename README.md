@@ -19,4 +19,8 @@ bash dev-vue.sh
 
 ### 接口文档地址
 
-http://xxx.com/swagger/index.html
+    http://xxx.com/swagger/index.html
+
+注释说明地址：
+
+    https://swaggo.github.io/swaggo.io/declarative_comments_format/general_api_info.html
