@@ -5,6 +5,7 @@ import (
 
 	"github.com/LyricTian/gzip"
 	"github.com/gin-gonic/gin"
+	"github.com/jinlicode/jinli-panel/controller/auth"
 	_ "github.com/jinlicode/jinli-panel/docs"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
@@ -20,11 +21,7 @@ func InitRouter() *gin.Engine {
 
 	v1 := router.Group("/v1")
 	{
-		v1.GET("/login", func(c *gin.Context) {
-			c.JSON(200, gin.H{
-				"message": "login",
-			})
-		})
+		v1.GET("/login", auth.Login)
 	}
 	router.Run("0.0.0.0:9527")
 	return router
