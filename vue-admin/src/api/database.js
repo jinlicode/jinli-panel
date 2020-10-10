@@ -2,7 +2,7 @@ import request from '@/utils/request'
 
 export function fetchList(query) {
   return request({
-    url: '/vue-element-admin/database/list',
+    url: '/database/list',
     method: 'get',
     params: query
   })
@@ -10,7 +10,7 @@ export function fetchList(query) {
 
 export function fetchSite(id) {
   return request({
-    url: '/vue-element-admin/database/detail',
+    url: '/database/detail',
     method: 'get',
     params: { id }
   })
@@ -18,7 +18,7 @@ export function fetchSite(id) {
 
 export function createSite(data) {
   return request({
-    url: '/vue-element-admin/database/create',
+    url: '/database/create',
     method: 'post',
     data
   })
@@ -26,7 +26,7 @@ export function createSite(data) {
 
 export function updateSite(data) {
   return request({
-    url: '/vue-element-admin/database/update',
+    url: '/database/update',
     method: 'post',
     data
   })

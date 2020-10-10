@@ -2,21 +2,22 @@ const Mock = require('mockjs')
 
 const List = []
 const count = 100
+const phpVersion = ['5.6', '7.0', '7.1', '7.2', '7.3', '5.6-sec', '7.0-sec', '7.1-sec', '7.2-sec', '7.3-sec']
 
 for (let i = 0; i < count; i++) {
   List.push(Mock.mock({
     id: '@increment',
-    php_version: '7.0',
-    url: 'www.baidu.com',
-    email: '5@qq.com',
-    status: 1,
-    is_ssl: true
+    php_version: phpVersion[i % 10],
+    url: '@domain',
+    email: '@email',
+    status: '@integer(0,1)',
+    is_ssl: '@integer(0,1)'
   }))
 }
 
 module.exports = [
   {
-    url: '/vue-element-admin/site/list',
+    url: '/site/list',
     type: 'get',
     response: config => {
       const { importance, type, title, page = 1, limit = 20, sort } = config.query
@@ -43,43 +44,8 @@ module.exports = [
       }
     }
   },
-
   {
-    url: '/vue-element-admin/site/detail',
-    type: 'get',
-    response: config => {
-      const { id } = config.query
-      for (const site of List) {
-        if (site.id === +id) {
-          return {
-            code: 20000,
-            data: site
-          }
-        }
-      }
-    }
-  },
-
-  {
-    url: '/vue-element-admin/site/pv',
-    type: 'get',
-    response: _ => {
-      return {
-        code: 20000,
-        data: {
-          pvData: [
-            { key: 'PC', pv: 1024 },
-            { key: 'mobile', pv: 1024 },
-            { key: 'ios', pv: 1024 },
-            { key: 'android', pv: 1024 }
-          ]
-        }
-      }
-    }
-  },
-
-  {
-    url: '/vue-element-admin/site/create',
+    url: '/site/create',
     type: 'post',
     response: _ => {
       return {
@@ -88,9 +54,8 @@ module.exports = [
       }
     }
   },
-
   {
-    url: '/vue-element-admin/site/update',
+    url: '/site/update',
     type: 'post',
     response: _ => {
       return {

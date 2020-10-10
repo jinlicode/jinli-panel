@@ -85,3 +85,12 @@ export function isArray(arg) {
   }
   return Array.isArray(arg)
 }
+
+/**
+ * @param {string} url
+ * @returns {Boolean}
+ */
+export function validDomain(url) {
+  const reg = /^([\w\-\*]{1,100}\.){1,4}([\w\-]{1,24}|[\w\-]{1,24}\.[\w\-]{1,24})$/
+  return reg.test(url)
+}

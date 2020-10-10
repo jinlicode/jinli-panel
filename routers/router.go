@@ -19,10 +19,12 @@ func InitRouter() *gin.Engine {
 	router.StaticFile("/favicon.ico", "./html/favicon.ico")
 	router.StaticFile("/", "./html/index.html")
 
-	v1 := router.Group("/v1")
+	v1 := router.Group("/v1/user")
 	{
-		v1.GET("/login", auth.Login)
+		v1.POST("/login", auth.Login)
+		v1.GET("/info", auth.Info)
 	}
+
 	router.Run("0.0.0.0:9527")
 	return router
 }

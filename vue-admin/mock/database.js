@@ -14,7 +14,7 @@ for (let i = 0; i < count; i++) {
 
 module.exports = [
   {
-    url: '/vue-element-admin/database/list',
+    url: '/database/list',
     type: 'get',
     response: config => {
       const { importance, type, title, page = 1, limit = 20, sort } = config.query
@@ -42,7 +42,7 @@ module.exports = [
     }
   },
   {
-    url: '/vue-element-admin/database/create',
+    url: '/database/create',
     type: 'post',
     response: _ => {
       return {
@@ -53,7 +53,7 @@ module.exports = [
   },
 
   {
-    url: '/vue-element-admin/database/update',
+    url: '/database/update',
     type: 'post',
     response: _ => {
       return {

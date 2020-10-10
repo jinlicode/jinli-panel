@@ -32,8 +32,8 @@
       </el-table-column>
       <el-table-column label="状态" class-name="status-col" width="100">
         <template slot-scope="{row}">
-          <el-tag :type="row.status | statusFilter">
-            {{ row.status }}
+          <el-tag>
+            {{ row.status | statusFilter }}
           </el-tag>
         </template>
       </el-table-column>
@@ -53,21 +53,21 @@
 
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
       <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="70px" style="width: 400px; margin-left:50px;">
-        <el-form-item label="PHP" prop="type">
-          <el-select v-model="temp.type" class="filter-item" placeholder="请选择">
+        <el-form-item label="PHP" prop="php_version">
+          <el-select v-model="temp.php_version" class="filter-item" placeholder="请选择">
             <el-option v-for="item in phpVersionOptions" :key="item.key" :label="item.display_name" :value="item.key" />
           </el-select>
         </el-form-item>
         <el-form-item label="域名" prop="url">
           <el-input v-model="temp.url" placeholder="请输入" />
         </el-form-item>
-        <el-form-item label="协议">
+        <el-form-item label="协议" prop="is_ssl">
           <el-radio-group v-model="temp.is_ssl">
-            <el-radio v-model="temp.is_ssl" label="1">https</el-radio>
-            <el-radio v-model="temp.is_ssl" label="0">http</el-radio>
+            <el-radio :label="1">https</el-radio>
+            <el-radio :label="0">http</el-radio>
           </el-radio-group>
         </el-form-item>
-        <el-form-item :hidden="temp.is_ssl != 1" label="邮箱" prop="email">
+        <el-form-item v-if="temp.is_ssl == 1" label="邮箱" prop="email">
           <el-input v-model="temp.email" placeholder="请输入" />
         </el-form-item>
       </el-form>
@@ -80,14 +80,30 @@
         </el-button>
       </div>
     </el-dialog>
+
+    <el-dialog :title="'删除 ['+temp.url+']'" :visible.sync="dialogDelVisible" width="30%">
+      <el-form ref="delForm" :model="temp" label-position="left" label-width="70px">
+        <template>
+          <el-checkbox disabled>备选项1</el-checkbox>
+          <el-checkbox disabled>备选项</el-checkbox>
+        </template>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogDelVisible = false">
+          取消
+        </el-button>
+        <el-button type="primary" @click="delData()">
+          确定删除
+        </el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script>
 import { fetchList, createSite, updateSite } from '@/api/site'
-import waves from '@/directive/waves' // waves directive
-import { parseTime } from '@/utils'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
+import { validDomain, validEmail } from '@/utils/validate'
 
 const phpVersionOptions = [
   { key: '5.6', display_name: 'php-5.6' },
@@ -105,7 +121,6 @@ const phpVersionOptions = [
 export default {
   name: 'SiteList',
   components: { Pagination },
-  directives: { waves },
   filters: {
     statusFilter(status) {
       const statusMap = {
@@ -117,6 +132,20 @@ export default {
     }
   },
   data() {
+    const validateDomain = (rule, value, callback) => {
+      if (!validDomain(value)) {
+        callback(new Error('域名格式错误'))
+      } else {
+        callback()
+      }
+    }
+    const validateEmail = (rule, value, callback) => {
+      if (!validEmail(value)) {
+        callback(new Error('邮箱格式错误'))
+      } else {
+        callback()
+      }
+    }
     return {
       tableKey: 0,
       list: null,
@@ -125,13 +154,11 @@ export default {
       listQuery: {
         page: 1,
         limit: 20,
-        importance: undefined,
         php_version: undefined,
         email: undefined,
         is_ssl: undefined,
         url: undefined
       },
-      importanceOptions: [1, 2, 3],
       phpVersionOptions,
       temp: {
         id: undefined,
@@ -140,6 +167,7 @@ export default {
         url: ''
       },
       dialogFormVisible: false,
+      dialogDelVisible: false,
       dialogStatus: '',
       textMap: {
         update: '编辑网站',
@@ -148,8 +176,19 @@ export default {
       dialogPvVisible: false,
       pvData: [],
       rules: {
-        type: [{ required: true, message: 'php 必选', trigger: 'change' }],
-        url: [{ required: true, message: '域名必填', trigger: 'blur' }]
+        php_version: [
+          { required: true, message: 'php版本 必选', trigger: 'change' }
+        ],
+        url: [
+          { required: true, message: '域名必填', trigger: 'blur' },
+          { trigger: 'blur', validator: validateDomain }
+        ],
+        is_ssl: [
+          { required: true, message: '请选择网站协议', trigger: 'change' }
+        ],
+        email: [
+          { required: true, trigger: 'blur', validator: validateEmail }
+        ]
       },
       downloadLoading: false
     }
@@ -163,11 +202,7 @@ export default {
       fetchList(this.listQuery).then(response => {
         this.list = response.data.items
         this.total = response.data.total
-
-        // Just to simulate the time of the request
-        setTimeout(() => {
-          this.listLoading = false
-        }, 1.5 * 1000)
+        this.listLoading = false
       })
     },
     handleFilter() {
@@ -246,22 +281,18 @@ export default {
       })
     },
     handleDelete(row, index) {
+      this.temp = Object.assign({}, row) // copy obj
+      this.dialogDelVisible = true
+    },
+    delData() {
       this.$notify({
-        title: 'Success',
-        message: 'Delete Successfully',
+        title: '提示',
+        message: '删除成功',
         type: 'success',
         duration: 2000
       })
-      this.list.splice(index, 1)
-    },
-    formatJson(filterVal) {
-      return this.list.map(v => filterVal.map(j => {
-        if (j === 'timestamp') {
-          return parseTime(v[j])
-        } else {
-          return v[j]
-        }
-      }))
+      this.dialogDelVisible = false
+      // this.list.splice(index, 1)
     }
   }
 }
