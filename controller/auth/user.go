@@ -73,3 +73,13 @@ func Info(c *gin.Context) {
 	}
 
 }
+
+func Logout(c *gin.Context) {
+	token := c.Request.Header.Get("X-Token")
+	model.Logout(token)
+
+	c.JSON(200, gin.H{
+		"code": 20000,
+		"data": "success",
+	})
+}

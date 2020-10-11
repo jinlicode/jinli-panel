@@ -23,6 +23,7 @@ func InitRouter() *gin.Engine {
 	{
 		v1.POST("/login", auth.Login)
 		v1.GET("/info", auth.Info)
+		v1.POST("/logout", auth.Logout)
 	}
 
 	router.Run("0.0.0.0:9527")

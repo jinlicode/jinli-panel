@@ -76,6 +76,14 @@ func GetInfo(token string) User {
 	return user
 }
 
+// Logout 退出登录 清空token
+func Logout(token string) bool {
+	// 检测帐号密码是否正确
+	db.Model(User{}).Select("token", "fail_time", "fail_num").Where("token = ?", token).Updates(User{Token: "", FailTime: 0, FailNum: 0})
+
+	return true
+}
+
 // CheckToken 检测token是否过期
 func CheckToken() bool {
 	return true
