@@ -2,6 +2,6 @@ package site
 
 import "github.com/gin-gonic/gin"
 
-func CreateSite(c *gin.Context) {
+func EditSite(c *gin.Context) {
 
 }

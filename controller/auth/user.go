@@ -2,15 +2,10 @@ package auth
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/jinlicode/jinli-panel/global/response"
 	"github.com/jinlicode/jinli-panel/model"
 	"github.com/jinlicode/jinli-panel/model/request"
 )
-
-type Response struct {
-	Code int         `json:"code"`
-	Data interface{} `json:"data"`
-	Msg  string      `json:"msg"`
-}
 
 func Login(c *gin.Context) {
 	var R request.LoginStruct
@@ -22,28 +17,15 @@ func Login(c *gin.Context) {
 	id, err := model.DoLogin(username, password)
 
 	if id == -1 {
-		c.JSON(200, gin.H{
-			"code":    60204,
-			"message": "帐号不存在",
-		})
+		response.FailWithMessage("帐号不存在", c)
 	} else if id == -2 {
-		c.JSON(200, gin.H{
-			"code":    60204,
-			"message": "密码错误",
-		})
+		response.FailWithMessage("密码错误", c)
 	} else if id == -3 {
-		c.JSON(200, gin.H{
-			"code":    60204,
-			"message": "登录错误太多，请过15分钟在尝试",
-		})
+		response.FailWithMessage("登录错误太多，请过15分钟在尝试", c)
 	} else {
 		data := make(map[string]string)
 		data["token"] = err
-		c.JSON(200, Response{
-			20000,
-			data,
-			"OK",
-		})
+		response.OkWithData(data, c)
 	}
 }
 
@@ -53,10 +35,7 @@ func Info(c *gin.Context) {
 	user := model.GetInfo(token)
 
 	if user.ID == 0 {
-		c.JSON(200, gin.H{
-			"code":    50008,
-			"message": "帐号已过期，请重新登录",
-		})
+		response.FailWithMessage("帐号已过期，请重新登录", c)
 	} else {
 		data := make(map[string]interface{})
 
@@ -64,12 +43,7 @@ func Info(c *gin.Context) {
 		data["introduction"] = user.Name
 		data["avatar"] = "https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif"
 		data["name"] = user.Name
-
-		c.JSON(200, Response{
-			20000,
-			data,
-			"OK",
-		})
+		response.OkWithData(data, c)
 	}
 
 }
@@ -77,9 +51,6 @@ func Info(c *gin.Context) {
 func Logout(c *gin.Context) {
 	token := c.Request.Header.Get("X-Token")
 	model.Logout(token)
+	response.OkWithData("success", c)
 
-	c.JSON(200, gin.H{
-		"code": 20000,
-		"data": "success",
-	})
 }

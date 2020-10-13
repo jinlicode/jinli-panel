@@ -22,12 +22,12 @@
       </el-table-column>
       <el-table-column label="网站域名" min-width="150px">
         <template slot-scope="{row}">
-          <span class="link-type" @click="handleUpdate(row)">{{ row.url }}</span>
+          <span class="link-type" @click="handleUpdate(row)">{{ row.domain }}</span>
         </template>
       </el-table-column>
       <el-table-column label="网站路径" min-width="150px"> align="center">
         <template slot-scope="{row}">
-          <span>{{ row.url }}</span>
+          <span>{{ row.domain }}</span>
         </template>
       </el-table-column>
       <el-table-column label="状态" class-name="status-col" width="100">
@@ -58,8 +58,8 @@
             <el-option v-for="item in phpVersionOptions" :key="item.key" :label="item.display_name" :value="item.key" />
           </el-select>
         </el-form-item>
-        <el-form-item label="域名" prop="url">
-          <el-input v-model="temp.url" placeholder="请输入" />
+        <el-form-item label="域名" prop="domain">
+          <el-input v-model="temp.domain" placeholder="请输入" />
         </el-form-item>
         <el-form-item label="协议" prop="is_ssl">
           <el-radio-group v-model="temp.is_ssl">
@@ -157,14 +157,14 @@ export default {
         php_version: undefined,
         email: undefined,
         is_ssl: undefined,
-        url: undefined
+        domain: undefined
       },
       phpVersionOptions,
       temp: {
         id: undefined,
         php_version: '5.6',
         is_ssl: 1,
-        url: ''
+        domain: ''
       },
       dialogFormVisible: false,
       dialogDelVisible: false,
@@ -179,7 +179,7 @@ export default {
         php_version: [
           { required: true, message: 'php版本 必选', trigger: 'change' }
         ],
-        url: [
+        domain: [
           { required: true, message: '域名必填', trigger: 'blur' },
           { trigger: 'blur', validator: validateDomain }
         ],
@@ -200,7 +200,7 @@ export default {
     getList() {
       this.listLoading = true
       fetchList(this.listQuery).then(response => {
-        this.list = response.data.items
+        this.list = response.data.list
         this.total = response.data.total
         this.listLoading = false
       })
