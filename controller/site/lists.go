@@ -26,30 +26,4 @@ func GetLists(c *gin.Context) {
 			PageSize: pageInfo.PageSize,
 		}, c)
 	}
-
-	// data := make(map[string]string)
-
-	// c.JSON(200, Response{
-	// 	20000,
-	// 	data,
-	// 	"OK",
-	// })
-
-	// {
-	// 	"code": 20000,
-	// 	"data": {
-	// 		"total": 100,
-	// 		"items": [
-	// 			{
-	// 				"id": 1,
-	// 				"php_version": "5.6",
-	// 				"url": "siytsdp.ne",
-	// 				"email": "b.ehmoqvpuk@oimzbi.gov.cn",
-	// 				"status": 0,
-	// 				"is_ssl": 1
-	// 			}
-	// 		]
-	// 	}
-	// }
-
 }
