@@ -84,8 +84,8 @@
     <el-dialog :title="'删除 ['+temp.domain+']'" :visible.sync="dialogDelVisible" width="30%">
       <el-form ref="delForm" :model="temp" label-position="left" label-width="70px">
         <template>
-          <el-checkbox disabled>备选项1</el-checkbox>
-          <el-checkbox disabled>备选项</el-checkbox>
+          <el-checkbox v-model="delDatabase" lable="1">删除对应数据库</el-checkbox>
+          <el-checkbox v-model="delCode" lable="1">删除对应程序代码</el-checkbox>
         </template>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -101,7 +101,7 @@
 </template>
 
 <script>
-import { fetchList, createSite, updateSite } from '@/api/site'
+import { fetchList, createSite, updateSite, deleteSite } from '@/api/site'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
 import { validDomain, validEmail } from '@/utils/validate'
 
@@ -126,7 +126,7 @@ export default {
       const statusMap = {
         1: '运行中',
         2: '已暂停',
-        0: '已暂停'
+        0: '启动中'
       }
       return statusMap[status]
     }
@@ -148,6 +148,8 @@ export default {
     }
     return {
       tableKey: 0,
+      delDatabase: 0,
+      delCode: 0,
       list: null,
       total: 0,
       listLoading: true,
@@ -157,6 +159,7 @@ export default {
         php_version: undefined,
         email: undefined,
         is_ssl: undefined,
+        status: undefined,
         domain: undefined
       },
       phpVersionOptions,
@@ -164,7 +167,8 @@ export default {
         id: undefined,
         php_version: '5.6',
         is_ssl: 1,
-        domain: ''
+        domain: '',
+        status: 0
       },
       dialogFormVisible: false,
       dialogDelVisible: false,
@@ -221,6 +225,7 @@ export default {
         id: undefined,
         php_version: '5.6',
         is_ssl: 0,
+        status: 0,
         domain: ''
       }
     },
@@ -236,14 +241,18 @@ export default {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
           this.temp.id = 0
+          const _that = this
           createSite(this.temp).then(() => {
-            this.list.unshift(this.temp)
             this.dialogFormVisible = false
             this.$notify({
               title: 'Success',
               message: '创建成功',
               type: 'success',
-              duration: 2000
+              duration: 2000,
+              onClose: function() {
+                // 从新渲染
+                _that.getList()
+              }
             })
           })
         }
@@ -278,16 +287,27 @@ export default {
     handleDelete(row, index) {
       this.temp = Object.assign({}, row) // copy obj
       this.dialogDelVisible = true
+      this.delDatabase = 0
+      this.delCode = 0
     },
     delData() {
-      this.$notify({
-        title: '提示',
-        message: '删除成功',
-        type: 'success',
-        duration: 2000
+      this.temp.delDatabase = this.delDatabase
+      this.temp.delCode = this.delCode
+
+      deleteSite(this.temp).then(() => {
+        this.dialogDelVisible = false
+        const _that = this
+        this.$notify({
+          title: '提示',
+          message: '删除成功',
+          type: 'success',
+          duration: 2000,
+          onClose: function() {
+            // 从新渲染
+            _that.getList()
+          }
+        })
       })
-      this.dialogDelVisible = false
-      // this.list.splice(index, 1)
     }
   }
 }

@@ -37,8 +37,15 @@ func CheckSiteByDomain(domain string) bool {
 
 // CreateSite
 func CreateSite(info request.SiteStruct) (err error) {
-	site := Site{Domain: info.Domain, Email: info.Email, PhpVersion: info.PhpVersion, IsSsl: info.IsSsl, Status: 1}
+	site := Site{Domain: info.Domain, Email: info.Email, PhpVersion: info.PhpVersion, IsSsl: info.IsSsl, Status: 0}
 
 	err = db.Create(&site).Error
+	return err
+}
+
+// DelSite
+func DelSite(info request.SiteStruct) (err error) {
+	site := Site{ID: info.ID}
+	err = db.Where("id = ?", site.ID).Delete(&site).Error
 	return err
 }

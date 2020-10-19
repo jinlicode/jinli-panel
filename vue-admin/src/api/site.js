@@ -31,3 +31,11 @@ export function updateSite(data) {
     data
   })
 }
+
+export function deleteSite(data) {
+  return request({
+    url: '/site/delete',
+    method: 'post',
+    data
+  })
+}

@@ -8,9 +8,9 @@ for (let i = 0; i < count; i++) {
   List.push(Mock.mock({
     id: '@increment',
     php_version: phpVersion[i % 10],
-    url: '@domain',
+    domain: '@domain',
     email: '@email',
-    status: '@integer(0,1)',
+    status: '@integer(0,1,2)',
     is_ssl: '@integer(0,1)'
   }))
 }
@@ -39,7 +39,7 @@ module.exports = [
         code: 20000,
         data: {
           total: mockList.length,
-          items: pageList
+          list: pageList
         }
       }
     }

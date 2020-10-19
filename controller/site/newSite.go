@@ -1,8 +1,6 @@
 package site
 
 import (
-	"fmt"
-
 	"github.com/gin-gonic/gin"
 	"github.com/jinlicode/jinli-panel/global/response"
 	"github.com/jinlicode/jinli-panel/model"
@@ -42,7 +40,6 @@ func CreateSite(c *gin.Context) {
 	}
 
 	//入库
-	fmt.Println(R)
 	model.CreateSite(R)
 
 	response.OkWithData("success", c)
