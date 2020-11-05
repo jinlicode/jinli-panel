@@ -55,6 +55,16 @@ func ExecLinuxCommandReturn(BashCommand string) string {
 	return string(out)
 }
 
+// PortInUse 检测端口是否被占用
+func PortInUse(port int) bool {
+	BashCommand := fmt.Sprintf("lsof -i:%d ", port)
+	output, _ := exec.Command("bash", "-c", BashCommand).CombinedOutput()
+	if len(output) > 0 {
+		return true
+	}
+	return false
+}
+
 //版本号对比version1系统版本，version2为最低版本 返回值：1为正常，-1为版本过低， 0为版本匹配
 func CompareVersion(version1 string, version2 string) int {
 	versionA := strings.Split(version1, ".")
