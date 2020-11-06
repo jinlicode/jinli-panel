@@ -4,6 +4,7 @@ import (
 	"io/ioutil"
 	"log"
 	"math/rand"
+	"strings"
 	"time"
 )
 
@@ -65,4 +66,9 @@ func GetPathFiles(path string, isDir bool) []string {
 //PHPChooseVersion php版本选择
 func PHPChooseVersion() string {
 	return ""
+}
+
+// DotToUnderline 点转下划线
+func DotToUnderline(str string) string {
+	return strings.Replace(str, ".", "_", -1)
 }

@@ -10,7 +10,7 @@ import (
 
 func DelSite(c *gin.Context) {
 
-	var R request.SiteStruct
+	var R request.Site
 	_ = c.ShouldBindJSON(&R)
 
 	SiteVerify := utils.Rules{

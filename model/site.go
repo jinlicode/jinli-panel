@@ -1,34 +1,27 @@
 package model
 
 import (
+	"time"
+
 	"github.com/jinlicode/jinli-panel/model/request"
 )
-
-type Site struct {
-	ID         int    `json:"id"`
-	Domain     string `json:"domain"`
-	Email      string `json:"email"`
-	PhpVersion string `json:"php_version"`
-	IsSsl      int64  `json:"is_ssl"`
-	Status     int64  `json:"status"`
-}
 
 // GetSiteList
 func GetSiteList(info request.PageInfo) (err error, list interface{}, total int64) {
 	limit := info.PageSize
 	offset := info.PageSize * (info.Page - 1)
-	var site []Site
+	var site []request.Site
 	err = db.Limit(limit).Offset(offset).Find(&site).Error
 	return err, site, total
 }
 
 // CheckSiteByDomain
-func CheckSiteByDomain(domain string) bool {
-	var site Site
+func CheckSiteByDomain(name string) bool {
+	var domain request.Domain
 
-	db.Where("domain = ?", domain).First(&site).Scan(&site)
+	db.Where("name = ?", name).First(&domain).Scan(&domain)
 
-	if site.ID == 0 {
+	if domain.ID == 0 {
 		return true
 	}
 
@@ -36,16 +29,19 @@ func CheckSiteByDomain(domain string) bool {
 }
 
 // CreateSite
-func CreateSite(info request.SiteStruct) (err error) {
-	site := Site{Domain: info.Domain, Email: info.Email, PhpVersion: info.PhpVersion, IsSsl: info.IsSsl, Status: 0}
+func CreateSite(info request.Site) (err error) {
+	site := request.Site{Domain: info.Domain, Email: info.Email, PhpVersion: info.PhpVersion, IsSsl: info.IsSsl, Status: 0, Addtime: time.Now().Format("2006-01-02 15:04:05")}
 
 	err = db.Create(&site).Error
+	domain := request.Domain{Name: info.Domain, Pid: 0, Addtime: time.Now().Format("2006-01-02 15:04:05")}
+	domain.ID = site.ID
+	err = db.Create(&domain).Error
 	return err
 }
 
 // DelSite
-func DelSite(info request.SiteStruct) (err error) {
-	site := Site{ID: info.ID}
+func DelSite(info request.Site) (err error) {
+	site := request.Site{ID: info.ID}
 	err = db.Where("id = ?", site.ID).Delete(&site).Error
 	return err
 }

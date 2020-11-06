@@ -22,12 +22,12 @@
       </el-table-column>
       <el-table-column label="网站域名" min-width="150px">
         <template slot-scope="{row}">
-          <span class="link-type" @click="handleUpdate(row)">{{ row.domain }}</span>
+          {{ row.domain }}
         </template>
       </el-table-column>
       <el-table-column label="网站路径" min-width="150px"> align="center">
         <template slot-scope="{row}">
-          <span>{{ row.domain }}</span>
+          <span>/var/jinli_panel/{{ row.domain }}</span>
         </template>
       </el-table-column>
       <el-table-column label="状态" class-name="status-col" width="100">
@@ -37,18 +37,24 @@
           </el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" width="230" class-name="small-padding fixed-width">
+      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="{row,$index}">
-          <el-button type="primary" size="mini" @click="handleUpdate(row)">
-            编辑
-          </el-button>
-          <el-button v-if="row.status!='deleted'" size="mini" type="danger" @click="handleDelete(row,$index)">
-            删除
-          </el-button>
+          <el-dropdown trigger="click" @command="handleCommand">
+            <span class="el-dropdown-link">
+              操作<i class="el-icon-arrow-down el-icon--right" />
+            </span>
+            <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item @click="handleUpdate(row)">域名管理</el-dropdown-item>
+              <el-dropdown-item command="">伪静态</el-dropdown-item>
+              <el-dropdown-item>配置文件</el-dropdown-item>
+              <el-dropdown-item>PHP版本</el-dropdown-item>
+              <el-dropdown-item>网站根目录</el-dropdown-item>
+              <el-dropdown-item :command="$index">删除</el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
         </template>
       </el-table-column>
     </el-table>
-
     <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getList" />
 
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
@@ -308,6 +314,10 @@ export default {
           }
         })
       })
+    },
+    handleCommand(command) {
+      console.log(command)
+      this.$message('click on item ' + command)
     }
   }
 }
