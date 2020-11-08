@@ -77,11 +77,14 @@ func CreateSite(c *gin.Context) {
 	tools.ExecLinuxCommand("docker network create " + newDomain + "_net")
 
 	// 同时加入mysql网络和nginx网络
-	tools.ExecLinuxCommand("docker network connect " + newDomain + "_net mysql_net")
-	tools.ExecLinuxCommand("docker network connect " + newDomain + "_net nginx_net")
+	tools.ExecLinuxCommand("docker network connect " + newDomain + "_net mysql")
+	tools.ExecLinuxCommand("docker network connect " + newDomain + "_net nginx")
 
 	//创建测试网站
-	tools.ExecLinuxCommand("docker run -d --name " + newDomain + " --network  " + newDomain + "_net --user 10000:10000 --restart unless-stopped --env TZ=Asia/Shanghai -v " + global.BASEPATH + "code/" + newDomain + ":/var/www/" + newDomain + " -v " + global.BASEPATH + "config/php/" + newDomain + "/php.ini:/usr/local/etc/php/php.ini -v " + global.BASEPATH + "config/php/" + newDomain + "/php-fpm.conf:/usr/local/etc/php-fpm.conf -v " + global.BASEPATH + "config/php/" + newDomain + "/www.conf:/usr/local/etc/php-fpm.d/www.conf -v " + global.BASEPATH + "log/openrasp/" + newDomain + ":/opt/rasp/logs/alarm hub.jinli.plus/jinlicode/php:v7.3")
+	tools.ExecLinuxCommand("docker run -d --name " + newDomain + " --network  " + newDomain + "_net --user 10000:10000 --restart unless-stopped --env TZ=Asia/Shanghai -v " + global.BASEPATH + "code/" + newDomain + ":/var/www/" + newDomain + " -v " + global.BASEPATH + "config/php/" + newDomain + "/php.ini:/usr/local/etc/php/php.ini -v " + global.BASEPATH + "config/php/" + newDomain + "/php-fpm.conf:/usr/local/etc/php-fpm.conf -v " + global.BASEPATH + "config/php/" + newDomain + "/www.conf:/usr/local/etc/php-fpm.d/www.conf -v " + global.BASEPATH + "log/openrasp/" + newDomain + ":/opt/rasp/logs/alarm hub.jinli.plus/jinlicode/php:v" + R.PhpVersion)
+
+	//执行nginx重启
+	tools.ExecLinuxCommand("docker exec nginx nginx -s reload")
 
 	response.OkWithData("success", c)
 

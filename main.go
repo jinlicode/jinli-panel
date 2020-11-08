@@ -51,6 +51,13 @@ func main() {
 		//执行安装docker
 		tools.ExecDockerInstall()
 
+		// 后台默认拉基础镜像
+		tools.ExecLinuxCommand("nohup docker pull hub.jinli.plus/jinlicode/mysql:latest > /dev/null 2>&1 & ")
+		tools.ExecLinuxCommand("nohup docker pull hub.jinli.plus/jinlicode/nginx:v1 > /dev/null 2>&1 & ")
+		tools.ExecLinuxCommand("nohup docker pull hub.jinli.plus/jinlicode/memcached:1.6.6 > /dev/null 2>&1 & ")
+		tools.ExecLinuxCommand("nohup docker pull hub.jinli.plus/jinlicode/redis:5.0.9 > /dev/null 2>&1 & ")
+		tools.ExecLinuxCommand("nohup docker pull hub.jinli.plus/jinlicode/phpmyadmin:5.0.2 > /dev/null 2>&1 & ")
+
 		//创建项目目录
 		tools.ExecLinuxCommand("mkdir " + global.BASEPATH)
 		//创建代码目录
