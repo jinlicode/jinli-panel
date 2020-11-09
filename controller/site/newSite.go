@@ -62,9 +62,8 @@ func CreateSite(c *gin.Context) {
 	tools.WriteFile(global.BASEPATH+"config/php/"+newDomain+"/php-fpm.conf", Template.PhpFpm())
 	tools.WriteFile(global.BASEPATH+"config/rewrite/"+newDomain+".conf", "")
 
-	NewSiteHTTPS := "否"
 	//创建对应nginx.conf到对应目录
-	if NewSiteHTTPS == "否" {
+	if R.IsSsl == 0 {
 		TemplateNginxHTTPString := Template.TemplateNginxHttp(newDomain, Domain)
 		tools.WriteFile(global.BASEPATH+"config/nginx/"+newDomain+".conf", TemplateNginxHTTPString)
 
@@ -81,10 +80,16 @@ func CreateSite(c *gin.Context) {
 	tools.ExecLinuxCommand("docker network connect " + newDomain + "_net nginx")
 
 	//创建测试网站
-	tools.ExecLinuxCommand("docker run -d --name " + newDomain + " --network  " + newDomain + "_net --user 10000:10000 --restart unless-stopped --env TZ=Asia/Shanghai -v " + global.BASEPATH + "code/" + newDomain + ":/var/www/" + newDomain + " -v " + global.BASEPATH + "config/php/" + newDomain + "/php.ini:/usr/local/etc/php/php.ini -v " + global.BASEPATH + "config/php/" + newDomain + "/php-fpm.conf:/usr/local/etc/php-fpm.conf -v " + global.BASEPATH + "config/php/" + newDomain + "/www.conf:/usr/local/etc/php-fpm.d/www.conf -v " + global.BASEPATH + "log/openrasp/" + newDomain + ":/opt/rasp/logs/alarm hub.jinli.plus/jinlicode/php:v" + R.PhpVersion)
+	// tools.ExecLinuxCommand()
 
 	//执行nginx重启
-	tools.ExecLinuxCommand("docker exec nginx nginx -s reload")
+	// tools.ExecLinuxCommand()
+
+	shellString := "docker run -d --name " + newDomain + " --network  " + newDomain + "_net --user 10000:10000 --restart unless-stopped --env TZ=Asia/Shanghai -v " + global.BASEPATH + "code/" + newDomain + ":/var/www/" + newDomain + " -v " + global.BASEPATH + "config/php/" + newDomain + "/php.ini:/usr/local/etc/php/php.ini -v " + global.BASEPATH + "config/php/" + newDomain + "/php-fpm.conf:/usr/local/etc/php-fpm.conf -v " + global.BASEPATH + "config/php/" + newDomain + "/www.conf:/usr/local/etc/php-fpm.d/www.conf -v " + global.BASEPATH + "log/openrasp/" + newDomain + ":/opt/rasp/logs/alarm hub.jinli.plus/jinlicode/php:v" + R.PhpVersion + " && docker exec nginx nginx -s reload"
+
+	// 入task
+	task := request.Task{Name: "", Execstr: shellString}
+	model.AddTask(task)
 
 	response.OkWithData("success", c)
 

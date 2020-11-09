@@ -29,14 +29,14 @@ func CheckSiteByDomain(name string) bool {
 }
 
 // CreateSite
-func CreateSite(info request.Site) (err error) {
+func CreateSite(info request.Site) (id int, err error) {
 	site := request.Site{Domain: info.Domain, Email: info.Email, PhpVersion: info.PhpVersion, IsSsl: info.IsSsl, Status: 0, Addtime: time.Now().Format("2006-01-02 15:04:05")}
 
 	err = db.Create(&site).Error
 	domain := request.Domain{Name: info.Domain, Pid: 0, Addtime: time.Now().Format("2006-01-02 15:04:05")}
 	domain.ID = site.ID
 	err = db.Create(&domain).Error
-	return err
+	return site.ID, err
 }
 
 // DelSite
