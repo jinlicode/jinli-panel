@@ -137,7 +137,7 @@ func ExecDockerInstall() {
 	// step 5: 设置开机启动
 	ExecLinuxCommand("sudo systemctl enable docker")
 	// step 6: 增加必要安装包
-	ExecLinuxCommand("sudo yum install -y curl wget unzip lrzsz")
+	ExecLinuxCommand("sudo yum install -y curl wget unzip lrzsz lsof")
 
 	//设置docker源
 	ExecLinuxCommand("mkdir -p /etc/docker")
