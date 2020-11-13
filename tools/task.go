@@ -12,6 +12,10 @@ func RunTask() {
 	waitList, _ := model.GetTaskList("0")
 
 	for _, taskv := range waitList.([]request.Task) {
+
+		//设置任务状态为1运行中
+		model.SetTaskStatus(taskv.ID, "1")
+
 		// 判断是否是
 		if taskv.Type == "shell" && taskv.Execstr != "" {
 			ExecLinuxCommand(taskv.Execstr)
@@ -22,8 +26,8 @@ func RunTask() {
 			model.SetSiteStatus(taskv.Siteid, "1")
 		}
 
-		//设置任务状态为1已运行
-		model.SetTaskStatus(taskv.ID, "1")
+		//设置任务状态为2已运行
+		model.SetTaskStatus(taskv.ID, "2")
 
 	}
 }
