@@ -94,13 +94,13 @@ func main() {
 		//创建 Nginx 网段
 		tools.ExecLinuxCommand("docker network create nginx_net")
 		//创建nginx
-		tools.ExecLinuxCommand("docker run -d --name nginx --network nginx_net --restart always --env TZ=Asia/Shanghai -p 80:80 -p 443:443 -v " + global.BASEPATH + "config/nginx:/etc/nginx/conf.d -v " + global.BASEPATH + "code:/var/www -v " + global.BASEPATH + "log/nginx:/var/log/nginx -v " + global.BASEPATH + "config/cert:/etc/letsencrypt -v " + global.BASEPATH + "config/rewrite:/etc/nginx/rewrite hub.jinli.plus/jinlicode/nginx:v1")
+		tools.ExecLinuxCommand("nohup docker run -d --name nginx --network nginx_net --restart always --env TZ=Asia/Shanghai -p 80:80 -p 443:443 -v " + global.BASEPATH + "config/nginx:/etc/nginx/conf.d -v " + global.BASEPATH + "code:/var/www -v " + global.BASEPATH + "log/nginx:/var/log/nginx -v " + global.BASEPATH + "config/cert:/etc/letsencrypt -v " + global.BASEPATH + "config/rewrite:/etc/nginx/rewrite hub.jinli.plus/jinlicode/nginx:v1 > /dev/null 2>&1 & ")
 
 		//创建 Mysql 网段
 		tools.ExecLinuxCommand("docker network create mysql_net")
 		//自动生成mysql密码
 		mysqlRandPassword := tools.RandomString(16)
-		tools.ExecLinuxCommand("docker run -d --name mysql --network mysql_net --restart always --env TZ=Asia/Shanghai --env MYSQL_ROOT_PASSWORD=" + mysqlRandPassword + "  -p 3306:3306 -v " + global.BASEPATH + "db:/var/lib/mysql -v " + global.BASEPATH + "imput_db:/docker-entrypoint-initdb.d -v " + global.BASEPATH + "config/mysql/my.cnf:/etc/mysql/my.cnf hub.jinli.plus/jinlicode/mysql")
+		tools.ExecLinuxCommand("nohup docker run -d --name mysql --network mysql_net --restart always --env TZ=Asia/Shanghai --env MYSQL_ROOT_PASSWORD=" + mysqlRandPassword + "  -p 3306:3306 -v " + global.BASEPATH + "db:/var/lib/mysql -v " + global.BASEPATH + "imput_db:/docker-entrypoint-initdb.d -v " + global.BASEPATH + "config/mysql/my.cnf:/etc/mysql/my.cnf hub.jinli.plus/jinlicode/mysql > /dev/null 2>&1 & ")
 
 		tools.WriteFile(global.BASEPATH+"install.lock", "installed")
 

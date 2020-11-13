@@ -45,3 +45,10 @@ func DelSite(info request.Site) (err error) {
 	err = db.Where("id = ?", site.ID).Delete(&site).Error
 	return err
 }
+
+// SetSiteStatus
+func SetSiteStatus(siteid int, status string) (err error) {
+	site := request.Site{ID: siteid}
+	err = db.Model(&site).Update("status", status).Error
+	return err
+}
