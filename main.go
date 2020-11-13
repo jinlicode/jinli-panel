@@ -8,6 +8,7 @@ import (
 	"github.com/jinlicode/jinli-panel/global"
 	"github.com/jinlicode/jinli-panel/routers"
 	"github.com/jinlicode/jinli-panel/tools"
+	"github.com/robfig/cron"
 )
 
 // @title 锦鲤管理面板
@@ -106,6 +107,14 @@ func main() {
 
 	}
 
+	//跑定时任务
+	c := cron.New()
+	c.AddFunc("*/5 * * * * *", func() {
+		tools.RunTask()
+	})
+	c.Start()
+
 	// 启动gin
 	routers.InitRouter()
+	select {}
 }
