@@ -34,7 +34,7 @@ func CreateSite(info request.Site) (id int, err error) {
 
 	err = db.Create(&site).Error
 	domain := request.Domain{Name: info.Domain, Pid: 0, Addtime: time.Now().Format("2006-01-02 15:04:05")}
-	domain.ID = site.ID
+	domain.Pid = site.ID
 	err = db.Create(&domain).Error
 	return site.ID, err
 }

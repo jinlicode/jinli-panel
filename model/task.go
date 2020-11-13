@@ -15,7 +15,7 @@ func GetTaskList(status string) (list interface{}, err error) {
 
 // AddTask
 func AddTask(info request.Task) (err error) {
-	task := request.Task{Name: info.Name, Status: "0", Start: time.Now().Unix(), End: 0, Execstr: info.Execstr, Addtime: time.Now().Format("2006-01-02 15:04:05")}
+	task := request.Task{Name: info.Name, Siteid: info.Siteid, Type: info.Type, Status: "0", Start: time.Now().Unix(), End: 0, Execstr: info.Execstr, Addtime: time.Now().Format("2006-01-02 15:04:05")}
 	err = db.Create(&task).Error
 	return err
 }
