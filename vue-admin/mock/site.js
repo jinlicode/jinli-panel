@@ -63,6 +63,154 @@ module.exports = [
         data: 'success'
       }
     }
+  },
+  {
+    url: '/site/delete',
+    type: 'post',
+    response: _ => {
+      return {
+        code: 20000,
+        data: 'success'
+      }
+    }
+  },
+  {
+    url: '/site/get_conf',
+    type: 'get',
+    response: _ => {
+      return {
+        code: 20000,
+        data: {
+          text: '这个是get_conf内容'
+        }
+      }
+    }
+  },
+  {
+    url: '/site/update_conf',
+    type: 'post',
+    response: _ => {
+      return {
+        code: 20000,
+        data: 'success'
+      }
+    }
+  },
+  {
+    url: '/site/get_rewrite',
+    type: 'get',
+    response: _ => {
+      return {
+        code: 20000,
+        data: {
+          text: '这个是get_rewrite内容'
+        }
+      }
+    }
+  },
+  {
+    url: '/site/update_rewrite',
+    type: 'post',
+    response: _ => {
+      return {
+        code: 20000,
+        data: 'success'
+      }
+    }
+  },
+  {
+    url: '/site/get_php',
+    type: 'get',
+    response: _ => {
+      return {
+        code: 20000,
+        data: {
+          text: '7.1'
+        }
+      }
+    }
+  },
+  {
+    url: '/site/update_php',
+    type: 'post',
+    response: _ => {
+      return {
+        code: 20000,
+        data: 'success'
+      }
+    }
+  },
+  {
+    url: '/site/get_domain',
+    type: 'get',
+    response: _ => {
+      return {
+        code: 20000,
+        data: {
+          list: [
+            {"id":1, "name":"www.baidu.com", "pid":1},
+            {"id":2, "name":"www.baidu2.com", "pid":1},
+            {"id":3, "name":"www.baidu3.com", "pid":1},
+          ]
+        }
+      }
+    }
+  },
+  {
+    url: '/site/update_domain',
+    type: 'post',
+    response: _ => {
+      return {
+        code: 20000,
+        data: 'success'
+      }
+    }
+  },
+  {
+    url: '/site/del_domain',
+    type: 'post',
+    response: _ => {
+      return {
+        code: 20000,
+        data: 'success'
+      }
+    }
+  },
+  {
+    url: '/site/get_basepath',
+    type: 'get',
+    response: _ => {
+      return {
+        code: 20000,
+        data: {
+          list: [
+            '/',
+            'public',
+            'conf'
+          ]
+        }
+      }
+    }
+  },
+  {
+    url: '/site/update_basepath',
+    type: 'post',
+    response: _ => {
+      return {
+        code: 20000,
+        data: 'success'
+      }
+    }
+  },
+  {
+    url: '/site/update_status',
+    type: 'post',
+    response: _ => {
+      return {
+        code: 20000,
+        data: 'success'
+      }
+    }
   }
 ]
 

@@ -115,6 +115,84 @@ export const asyncRoutes = [
         component: () => import('@/views/site/list'),
         name: 'SiteList',
         meta: { title: '网站列表', icon: 'list' }
+      },
+      {
+        path: 'delete',
+        name: 'DeleteSite',
+        meta: { title: '删除网站', icon: 'del' },
+        hidden: true
+      },
+      {
+        path: 'get_conf',
+        name: 'GETSiteConf',
+        meta: { title: '获取配置', icon: 'edit' },
+        hidden: true
+      },
+      {
+        path: 'update_conf',
+        name: 'UpdateSiteConf',
+        meta: { title: '更新配置', icon: 'edit' },
+        hidden: true
+      },
+      {
+        path: 'get_rewrite',
+        name: 'GETSiteRewrite',
+        meta: { title: '获取伪静态', icon: 'edit' },
+        hidden: true
+      },
+      {
+        path: 'update_rewrite',
+        name: 'UpdateSiteRewrite',
+        meta: { title: '更新伪静态', icon: 'edit' },
+        hidden: true
+      },
+      {
+        path: 'get_php',
+        name: 'GETSitePhp',
+        meta: { title: '获取php', icon: 'edit' },
+        hidden: true
+      },
+      {
+        path: 'update_php',
+        name: 'UpdateSitePhp',
+        meta: { title: '设置php版本', icon: 'edit' },
+        hidden: true
+      },
+      {
+        path: 'get_domain',
+        name: 'GETSiteDomain',
+        meta: { title: '获取域名', icon: 'edit' },
+        hidden: true
+      },
+      {
+        path: 'update_domain',
+        name: 'UpdateSiteDomain',
+        meta: { title: '设置域名', icon: 'edit' },
+        hidden: true
+      },
+      {
+        path: 'del_domain',
+        name: 'DelSiteDomain',
+        meta: { title: '删除域名', icon: 'edit' },
+        hidden: true
+      },
+      {
+        path: 'get_basepath',
+        name: 'GETSiteBasepath',
+        meta: { title: '获取根目录', icon: 'edit' },
+        hidden: true
+      },
+      {
+        path: 'update_basepath',
+        name: 'UpdateSiteBasepath',
+        meta: { title: '设置根目录', icon: 'edit' },
+        hidden: true
+      },
+      {
+        path: 'update_status',
+        name: 'UpdateSiteStatus',
+        meta: { title: '设置网站状态', icon: 'edit' },
+        hidden: true
       }
     ]
   },

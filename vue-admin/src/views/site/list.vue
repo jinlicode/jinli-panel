@@ -20,38 +20,32 @@
           <span>{{ row.id }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="网站域名" min-width="150px">
+      <el-table-column label="网站域名" min-width="150">
         <template slot-scope="{row}">
           {{ row.domain }}
         </template>
       </el-table-column>
-      <el-table-column label="网站路径" min-width="150px"> align="center">
+      <el-table-column label="网站路径" min-width="200" align="left">
         <template slot-scope="{row}">
-          <span>/var/jinli_panel/{{ row.domain }}</span>
+          <span>/var/jinli_panel/code/{{ row.domain }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="状态" class-name="status-col" width="100">
+      <el-table-column label="状态" class-name="status-col" width="80">
         <template slot-scope="{row}">
           <el-tag>
             {{ row.status | statusFilter }}
           </el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
-        <template slot-scope="{row,$index}">
-          <el-dropdown trigger="click" @command="handleCommand">
-            <span class="el-dropdown-link">
-              操作<i class="el-icon-arrow-down el-icon--right" />
-            </span>
-            <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item @click="handleUpdate(row)">域名管理</el-dropdown-item>
-              <el-dropdown-item command="">伪静态</el-dropdown-item>
-              <el-dropdown-item>配置文件</el-dropdown-item>
-              <el-dropdown-item>PHP版本</el-dropdown-item>
-              <el-dropdown-item>网站根目录</el-dropdown-item>
-              <el-dropdown-item :command="$index">删除</el-dropdown-item>
-            </el-dropdown-menu>
-          </el-dropdown>
+      <el-table-column fixed="right" label="操作" min-width="460">
+        <template slot-scope="scope">
+          <el-button size="small" type="primary" @click="handleUpdate(scope.row, 'conf')">配置文件</el-button>
+          <el-button size="small" type="primary" @click="handleUpdate(scope.row, 'domain')">域名</el-button>
+          <el-button size="small" type="primary" @click="handleUpdate(scope.row, 'rewrite')">伪静态</el-button>
+          <el-button size="small" type="primary" @click="handleUpdate(scope.row, 'php')">PHP</el-button>
+          <el-button size="small" type="primary" @click="handleUpdate(scope.row, 'basepath')">根目录</el-button>
+          <el-button size="small" type="danger" @click="delData(scope.row)">删除</el-button>
+
         </template>
       </el-table-column>
     </el-table>
@@ -81,33 +75,98 @@
         <el-button @click="dialogFormVisible = false">
           取消
         </el-button>
-        <el-button type="primary" @click="dialogStatus==='create'?createData():updateData()">
+        <el-button type="primary" @click="createData()">
+          保存
+        </el-button>
+      </div>
+    </el-dialog>
+    <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogOptVisible">
+      <el-input v-model="dataText" type="textarea" placeholder="请输入内容" :rows="10" />
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogOptVisible = false">
+          取消
+        </el-button>
+        <el-button type="primary" @click="updateData(handleId, dialogStatus)">
+          保存
+        </el-button>
+      </div>
+    </el-dialog>
+    <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogBasepathVisible" width="30%">
+      请选择运行根目录：
+      <el-select v-model="basepath" placeholder="请选择">
+        <el-option
+          v-for="item in basepathData"
+          :key="item"
+          :value="item"
+        />
+      </el-select>
+
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogBasepathVisible = false">
+          取消
+        </el-button>
+        <el-button type="primary" @click="updateData(handleId, dialogStatus)">
           保存
         </el-button>
       </div>
     </el-dialog>
 
-    <el-dialog :title="'删除 ['+temp.domain+']'" :visible.sync="dialogDelVisible" width="30%">
-      <el-form ref="delForm" :model="temp" label-position="left" label-width="70px">
-        <template>
-          <el-checkbox v-model="delDatabase" lable="1">删除对应数据库</el-checkbox>
-          <el-checkbox v-model="delCode" lable="1">删除对应程序代码</el-checkbox>
-        </template>
-      </el-form>
+    <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogPhpVisible" width="30%">
+      请选择运行php版本：
+      <el-select v-model="phpcur" placeholder="请选择">
+        <el-option
+          v-for="item in phpVersionOptions"
+          :key="item.key"
+          :label="item.display_name"
+          :value="item.key"
+        />
+      </el-select>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogDelVisible = false">
+        <el-button @click="dialogPhpVisible = false">
           取消
         </el-button>
-        <el-button type="primary" @click="delData()">
-          确定删除
+        <el-button type="primary" @click="updateData(handleId, dialogStatus)">
+          保存
         </el-button>
       </div>
     </el-dialog>
+    <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogDomainVisible" width="30%">
+      <el-input v-model="dataText" type="textarea" placeholder="请输入新域名，一行一个" :rows="10" />
+      <div>
+        <el-table
+          :key="tableKey"
+          v-model="domainData"
+          :data="domainData"
+          style="width: 100%;"
+        >
+          <el-table-column label="域名">
+            <template slot-scope="sc">
+              {{ sc.row.name }}
+            </template>
+          </el-table-column>
+          <el-table-column align="right" label="操作">
+            <template slot-scope="sc">
+              <a href="javascript:;" @click="delSiteDomainHandle(sc.row, sc.$index)">删除</a>
+            </template>
+          </el-table-column>
+        </el-table>
+      </div>
+
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogDomainVisible = false">
+          取消
+        </el-button>
+        <el-button type="primary" @click="updateData(handleId, dialogStatus)">
+          保存
+        </el-button>
+      </div>
+    </el-dialog>
+
   </div>
 </template>
 
 <script>
-import { fetchList, createSite, updateSite, deleteSite } from '@/api/site'
+import { fetchList, createSite, deleteSite, getSiteConf, updateSiteConf, getSiteRewrite, updateSiteRewrite, getSitePhp, updateSitePhp, getSiteDomain, updateSiteDomain, delSiteDomain, getSiteBasepath, updateSiteBasepath } from '@/api/site'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
 import { validDomain, validEmail } from '@/utils/validate'
 
@@ -154,8 +213,6 @@ export default {
     }
     return {
       tableKey: 0,
-      delDatabase: 0,
-      delCode: 0,
       list: null,
       total: 0,
       listLoading: true,
@@ -169,6 +226,7 @@ export default {
         domain: undefined
       },
       phpVersionOptions,
+      dataText: '',
       temp: {
         id: undefined,
         php_version: '5.6',
@@ -176,15 +234,27 @@ export default {
         domain: '',
         status: 0
       },
+      phpcur: '',
+      basepath: '/',
+      handleId: null,
+      basepathData: null,
+      domainData: null,
       dialogFormVisible: false,
-      dialogDelVisible: false,
+      dialogOptVisible: false,
+      dialogBasepathVisible: false,
+      dialogPhpVisible: false,
+      dialogDomainVisible: false,
       dialogStatus: '',
       textMap: {
         update: '编辑网站',
-        create: '新建网站'
+        create: '新建网站',
+        conf: '配置文件',
+        domain: '域名编辑',
+        rewrite: '伪静态',
+        php: 'php版本',
+        basepath: '根目录绑定'
       },
       dialogPvVisible: false,
-      pvData: [],
       rules: {
         php_version: [
           { required: true, message: 'php版本 必选', trigger: 'change' }
@@ -199,8 +269,7 @@ export default {
         email: [
           { required: true, trigger: 'blur', validator: validateEmail }
         ]
-      },
-      downloadLoading: false
+      }
     }
   },
   created() {
@@ -264,61 +333,162 @@ export default {
         }
       })
     },
-    handleUpdate(row) {
-      this.temp = Object.assign({}, row) // copy obj
-      this.dialogStatus = 'update'
-      this.dialogFormVisible = true
-      this.$nextTick(() => {
-        this.$refs['dataForm'].clearValidate()
-      })
-    },
-    updateData() {
-      this.$refs['dataForm'].validate((valid) => {
-        if (valid) {
-          const tempData = Object.assign({}, this.temp)
-          updateSite(tempData).then(() => {
-            const index = this.list.findIndex(v => v.id === this.temp.id)
-            this.list.splice(index, 1, this.temp)
-            this.dialogFormVisible = false
-            this.$notify({
-              title: 'Success',
-              message: '保存成功',
-              type: 'success',
-              duration: 2000
-            })
-          })
-        }
-      })
-    },
-    handleDelete(row, index) {
-      this.temp = Object.assign({}, row) // copy obj
-      this.dialogDelVisible = true
-      this.delDatabase = 0
-      this.delCode = 0
-    },
-    delData() {
-      this.temp.delDatabase = this.delDatabase
-      this.temp.delCode = this.delCode
+    handleUpdate(row, status) {
+      // 加载动画
+      this.listLoading = true
+      this.handleId = row.id
 
-      deleteSite(this.temp).then(() => {
-        this.dialogDelVisible = false
-        const _that = this
-        this.$notify({
-          title: '提示',
-          message: '删除成功',
-          type: 'success',
-          duration: 2000,
-          onClose: function() {
-            // 从新渲染
-            _that.getList()
-          }
+      if (status === 'conf') {
+        getSiteConf(row.id).then(response => {
+          this.dialogOptVisible = true
+          this.dataText = response.data.text
+          this.dialogStatus = status
+          this.listLoading = false
+        })
+      } else if (status === 'rewrite') {
+        getSiteRewrite(row.id).then(response => {
+          this.dialogOptVisible = true
+          this.dataText = response.data.text
+          this.dialogStatus = status
+          this.listLoading = false
+        })
+      } else if (status === 'basepath') {
+        getSiteBasepath(row.id).then(response => {
+          this.dialogBasepathVisible = true
+          this.basepathData = response.data.list
+          this.dialogStatus = status
+          this.listLoading = false
+        })
+      } else if (status === 'php') {
+        getSitePhp(row.id).then(response => {
+          this.dialogPhpVisible = true
+          this.phpcur = response.data.text
+          this.dialogStatus = status
+          this.listLoading = false
+        })
+      } else if (status === 'domain') {
+        getSiteDomain(row.id).then(response => {
+          this.dialogDomainVisible = true
+          this.dataText = ''
+          this.domainData = response.data.list
+          this.dialogStatus = status
+          this.listLoading = false
+        })
+      }
+    },
+    // 更新conf
+    updateData(id, dialogStatus) {
+      const _that = this
+      if (dialogStatus === 'conf') {
+        updateSiteConf({
+          id: id,
+          text: _that.dataText
+        }).then(() => {
+          _that.$notify({
+            title: 'Success',
+            message: '保存成功',
+            type: 'success',
+            duration: 2000
+          })
+        })
+      } else if (dialogStatus === 'rewrite') {
+        updateSiteRewrite({
+          id: id,
+          text: _that.dataText
+        }).then(() => {
+          _that.$notify({
+            title: 'Success',
+            message: '保存成功',
+            type: 'success',
+            duration: 2000
+          })
+        })
+      } else if (dialogStatus === 'php') {
+        updateSitePhp({
+          id: id,
+          php: _that.phpcur
+        }).then(() => {
+          _that.$notify({
+            title: 'Success',
+            message: '保存成功',
+            type: 'success',
+            duration: 2000
+          })
+        })
+      } else if (dialogStatus === 'basepath') {
+        updateSiteBasepath({
+          id: id,
+          basepath: _that.basepath
+        }).then(() => {
+          _that.$notify({
+            title: 'Success',
+            message: '保存成功',
+            type: 'success',
+            duration: 2000
+          })
+        })
+      } else if (dialogStatus === 'domain') {
+        updateSiteDomain({
+          id: id,
+          text: _that.dataText
+        }).then(() => {
+          _that.$notify({
+            title: 'Success',
+            message: '保存成功',
+            type: 'success',
+            duration: 2000
+          })
+        })
+      }
+    },
+    // 删除站
+    delData(row) {
+      const _that = this
+      this.$confirm('此操作将永久删除次网站，包含数据库，程序代码', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        deleteSite({
+          id: row.id
+        }).then(() => {
+          _that.$notify({
+            title: '提示',
+            message: '删除成功',
+            type: 'success',
+            duration: 2000,
+            onClose: function() {
+              // 从新渲染
+              _that.getList()
+            }
+          })
         })
       })
     },
-    handleCommand(command) {
-      console.log(command)
-      this.$message('click on item ' + command)
+    // 删除域名
+    delSiteDomainHandle(row, index) {
+      const _that = this
+      this.$confirm('确定删除绑定域名吗？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        delSiteDomain({
+          id: row.id
+        }).then(() => {
+          _that.$notify({
+            title: '提示',
+            message: '删除成功',
+            type: 'success',
+            duration: 2000,
+            onClose: function() {
+              _that.domainData.splice(index, 1)
+            }
+          })
+        })
+      })
     }
+
   }
 }
 </script>
