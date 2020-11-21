@@ -1,7 +1,6 @@
 package routers
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/LyricTian/gzip"
@@ -23,8 +22,6 @@ func InitRouter() *gin.Engine {
 	router.StaticFile("/favicon.ico", "./html/favicon.ico")
 	router.StaticFile("/", "./html/index.html")
 
-	fmt.Println(router)
-
 	v1 := router.Group("/v1")
 	{
 		v1.POST("/user/login", auth.Login)
@@ -34,8 +31,24 @@ func InitRouter() *gin.Engine {
 		v1.GET("/site/list", site.GetLists)
 		v1.POST("/site/create", site.CreateSite)
 		v1.POST("/site/delete", site.DelSite)
-		v1.GET("/site/edit", site.EditSite)
 
+		v1.GET("/site/get_conf", site.GetSiteConf)
+		// v1.POST("/site/update_conf", site.UpdateSiteConf)
+
+		v1.GET("/site/get_rewrite", site.GetSiteRewrite)
+		// v1.POST("/site/update_rewrite", site.UpdateSiteRewrite)
+
+		// v1.GET("/site/get_php", site.GetSitePhp)
+		// v1.POST("/site/update_php", site.UpdateSitePhp)
+
+		// v1.GET("/site/get_domain", site.GetSiteDomain)
+		// v1.POST("/site/update_domain", site.UpdateSiteDomain)
+		// v1.POST("/site/del_domain", site.DelSiteDomain)
+
+		// v1.GET("/site/get_basepath", site.GetSiteBasepath)
+		// v1.POST("/site/update_basepath", site.UpdateSiteBasepath)
+
+		// v1.POST("/site/update_status", site.UpdateSiteStatus)
 	}
 
 	router.Run("0.0.0.0:9527")

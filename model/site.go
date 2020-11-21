@@ -52,3 +52,10 @@ func SetSiteStatus(siteid int, status string) (err error) {
 	err = db.Model(&site).Update("status", status).Error
 	return err
 }
+
+// GetSiteInfo
+func GetSiteInfo(siteid int) (list interface{}, err error) {
+	site := request.Site{ID: siteid}
+	err = db.First(&site).Error
+	return site, err
+}

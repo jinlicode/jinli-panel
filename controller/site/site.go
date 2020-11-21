@@ -1,16 +1,40 @@
 package site
 
 import (
+	"fmt"
+	"strconv"
+
 	"github.com/gin-gonic/gin"
 	"github.com/jinlicode/jinli-panel/Template"
 	"github.com/jinlicode/jinli-panel/global"
 	"github.com/jinlicode/jinli-panel/global/response"
 	"github.com/jinlicode/jinli-panel/model"
 	"github.com/jinlicode/jinli-panel/model/request"
+	resp "github.com/jinlicode/jinli-panel/model/response"
 	"github.com/jinlicode/jinli-panel/tools"
 	"github.com/jinlicode/jinli-panel/utils"
 )
 
+// GetLists 获取网站列表
+func GetLists(c *gin.Context) {
+
+	var pageInfo request.PageInfo
+	_ = c.ShouldBindJSON(&pageInfo)
+
+	err, list, total := model.GetSiteList(pageInfo)
+	if err != nil {
+		response.FailWithMessage(fmt.Sprintf("获取数据失败，%v", err), c)
+	} else {
+		response.OkWithData(resp.PageResult{
+			List:     list,
+			Total:    total,
+			Page:     pageInfo.Page,
+			PageSize: pageInfo.PageSize,
+		}, c)
+	}
+}
+
+// CreateSite 新建网站
 func CreateSite(c *gin.Context) {
 
 	var R request.Site
@@ -93,4 +117,71 @@ func CreateSite(c *gin.Context) {
 
 	response.OkWithData("success", c)
 
+}
+
+// DelSite 删除网站
+func DelSite(c *gin.Context) {
+
+	var R request.Site
+	_ = c.ShouldBindJSON(&R)
+
+	SiteVerify := utils.Rules{
+		"ID": {utils.NotEmpty()},
+	}
+
+	SiteVerifyErr := utils.Verify(R, SiteVerify)
+	if SiteVerifyErr != nil {
+		response.FailWithMessage(SiteVerifyErr.Error(), c)
+		return
+	}
+
+	model.DelSite(R)
+
+	response.OkWithData("success", c)
+}
+
+// GetSiteConf 获取网站配置项
+func GetSiteConf(c *gin.Context) {
+	id := c.Query("id")
+	idString, _ := strconv.Atoi(id)
+
+	info, _ := model.GetSiteInfo(idString)
+
+	siteInfo := info.(request.Site)
+
+	// 数据异常
+	if siteInfo.ID == 0 {
+		response.FailWithMessage("获取数据失败", c)
+	}
+
+	newDomain := tools.DotToUnderline(siteInfo.Domain)
+	confText := tools.ReadFile(global.BASEPATH + "config/nginx/" + newDomain + ".conf")
+
+	response.OkWithData(resp.TextResult{
+		Text: confText,
+	}, c)
+}
+
+// GetSiteRewrite 获取伪静态重写规则
+func GetSiteRewrite(c *gin.Context) {
+	id := c.Query("id")
+	idString, _ := strconv.Atoi(id)
+
+	info, _ := model.GetSiteInfo(idString)
+
+	siteInfo := info.(request.Site)
+
+	// 数据异常
+	if siteInfo.ID == 0 {
+		response.FailWithMessage("获取数据失败", c)
+	}
+
+	fmt.Println(siteInfo)
+
+	newDomain := tools.DotToUnderline(siteInfo.Domain)
+	RewriteText := tools.ReadFile(global.BASEPATH + "config/rewrite/" + newDomain + ".conf")
+
+	response.OkWithData(resp.TextResult{
+		Text: RewriteText,
+	}, c)
 }
