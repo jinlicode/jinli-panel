@@ -241,7 +241,7 @@ func UpdateSiteRewrite(c *gin.Context) {
 
 	// 获取原始的conf数据
 	newDomain := tools.DotToUnderline(siteInfo.Domain)
-	rewriteFilePath := global.BASEPATH + "config/nginx/rewrite/" + newDomain + ".conf"
+	rewriteFilePath := global.BASEPATH + "config/rewrite/" + newDomain + ".conf"
 	rewriteOldText := tools.ReadFile(rewriteFilePath)
 
 	if R.RewriteConf != rewriteOldText {
