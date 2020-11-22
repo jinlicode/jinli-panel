@@ -246,7 +246,7 @@ func UpdateSiteRewrite(c *gin.Context) {
 
 	if R.RewriteConf != rewriteOldText {
 		// 先把旧的存入数据库 然后检测是否配置正确
-		tools.WriteFile(rewriteFilePath, R.HostConf)
+		tools.WriteFile(rewriteFilePath, R.RewriteConf)
 		checkNginx := tools.ExecLinuxCommandReturn("docker exec nginx nginx -t")
 		checkNginxOk := strings.Contains(checkNginx, "successful")
 
