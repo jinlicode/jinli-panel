@@ -176,12 +176,79 @@ func GetSiteRewrite(c *gin.Context) {
 		response.FailWithMessage("获取数据失败", c)
 	}
 
-	fmt.Println(siteInfo)
-
 	newDomain := tools.DotToUnderline(siteInfo.Domain)
 	RewriteText := tools.ReadFile(global.BASEPATH + "config/rewrite/" + newDomain + ".conf")
 
 	response.OkWithData(resp.TextResult{
 		Text: RewriteText,
+	}, c)
+}
+
+// GetSitePhp 获取PHP版本
+func GetSitePhp(c *gin.Context) {
+	id := c.Query("id")
+	idString, _ := strconv.Atoi(id)
+
+	info, _ := model.GetSiteInfo(idString)
+
+	siteInfo := info.(request.Site)
+
+	// 数据异常
+	if siteInfo.ID == 0 {
+		response.FailWithMessage("获取数据失败", c)
+	}
+
+	response.OkWithData(resp.TextResult{
+		Text: siteInfo.PhpVersion,
+	}, c)
+}
+
+// GetSiteDomain 获取所有的绑定域名
+func GetSiteDomain(c *gin.Context) {
+	id := c.Query("id")
+	idString, _ := strconv.Atoi(id)
+
+	info, _ := model.GetSiteInfo(idString)
+
+	siteInfo := info.(request.Site)
+
+	// 数据异常
+	if siteInfo.ID == 0 {
+		response.FailWithMessage("获取数据失败", c)
+	}
+
+	// 获取domian域名
+	err, list := model.GetSiteDomainList(siteInfo.ID)
+	if err != nil {
+		response.FailWithMessage(fmt.Sprintf("获取数据失败，%v", err), c)
+	} else {
+		response.OkWithData(resp.PageResult{
+			List: list,
+		}, c)
+	}
+}
+
+// GetSiteBasepath 获取网站所有目录
+func GetSiteBasepath(c *gin.Context) {
+	id := c.Query("id")
+	idString, _ := strconv.Atoi(id)
+
+	info, _ := model.GetSiteInfo(idString)
+
+	siteInfo := info.(request.Site)
+
+	// 数据异常
+	if siteInfo.ID == 0 {
+		response.FailWithMessage("获取数据失败", c)
+	}
+
+	newDomain := tools.DotToUnderline(siteInfo.Domain)
+
+	//获取当前所有的目录的切片
+	DirListSlice := tools.GetPathFiles(global.BASEPATH+"code/"+newDomain, true)
+	DirListSlice = append(DirListSlice, "/")
+
+	response.OkWithData(resp.PageResult{
+		List: DirListSlice,
 	}, c)
 }

@@ -59,3 +59,10 @@ func GetSiteInfo(siteid int) (list interface{}, err error) {
 	err = db.First(&site).Error
 	return site, err
 }
+
+// GetSiteDomainList
+func GetSiteDomainList(siteid int) (err error, list interface{}) {
+	var domain []request.Domain
+	err = db.Where("pid = ?", siteid).Find(&domain).Error
+	return err, domain
+}
