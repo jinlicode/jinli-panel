@@ -185,8 +185,8 @@ module.exports = [
         data: {
           list: [
             '/',
-            'public',
-            'conf'
+            '/public',
+            '/conf'
           ]
         }
       }

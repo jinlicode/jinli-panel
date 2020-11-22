@@ -33,7 +33,7 @@ func InitRouter() *gin.Engine {
 		v1.POST("/site/delete", site.DelSite)
 
 		v1.GET("/site/get_conf", site.GetSiteConf)
-		// v1.POST("/site/update_conf", site.UpdateSiteConf)
+		v1.POST("/site/update_conf", site.UpdateSiteConf)
 
 		v1.GET("/site/get_rewrite", site.GetSiteRewrite)
 		// v1.POST("/site/update_rewrite", site.UpdateSiteRewrite)

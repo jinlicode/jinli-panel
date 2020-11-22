@@ -382,8 +382,8 @@ export default {
       if (dialogStatus === 'conf') {
         updateSiteConf({
           id: id,
-          text: _that.dataText
-        }).then(() => {
+          host_conf: _that.dataText
+        }).then((result) => {
           _that.$notify({
             title: 'Success',
             message: '保存成功',
@@ -394,8 +394,8 @@ export default {
       } else if (dialogStatus === 'rewrite') {
         updateSiteRewrite({
           id: id,
-          text: _that.dataText
-        }).then(() => {
+          rewrite_conf: _that.dataText
+        }).then((result) => {
           _that.$notify({
             title: 'Success',
             message: '保存成功',
@@ -407,7 +407,7 @@ export default {
         updateSitePhp({
           id: id,
           php: _that.phpcur
-        }).then(() => {
+        }).then((result) => {
           _that.$notify({
             title: 'Success',
             message: '保存成功',
@@ -419,7 +419,7 @@ export default {
         updateSiteBasepath({
           id: id,
           basepath: _that.basepath
-        }).then(() => {
+        }).then((result) => {
           _that.$notify({
             title: 'Success',
             message: '保存成功',
@@ -431,7 +431,7 @@ export default {
         updateSiteDomain({
           id: id,
           text: _that.dataText
-        }).then(() => {
+        }).then((result) => {
           _that.$notify({
             title: 'Success',
             message: '保存成功',
@@ -451,7 +451,7 @@ export default {
       }).then(() => {
         deleteSite({
           id: row.id
-        }).then(() => {
+        }).then((result) => {
           _that.$notify({
             title: '提示',
             message: '删除成功',
@@ -475,7 +475,7 @@ export default {
       }).then(() => {
         delSiteDomain({
           id: row.id
-        }).then(() => {
+        }).then((result) => {
           _that.$notify({
             title: '提示',
             message: '删除成功',
