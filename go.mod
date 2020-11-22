@@ -5,7 +5,7 @@ go 1.15
 require (
 	github.com/LyricTian/gzip v0.1.1
 	github.com/alecthomas/template v0.0.0-20190718012654-fb15b899a751
-	github.com/cosmtrek/air v1.21.2 // indirect
+	github.com/cosmtrek/air v1.12.2 // indirect
 	github.com/cpuguy83/go-md2man/v2 v2.0.0 // indirect
 	github.com/creack/pty v1.1.11 // indirect
 	github.com/fatih/color v1.10.0 // indirect
@@ -23,14 +23,14 @@ require (
 	github.com/mattn/go-colorable v0.1.8 // indirect
 	github.com/mattn/go-sqlite3 v1.14.2 // indirect
 	github.com/pelletier/go-toml v1.8.1 // indirect
-	github.com/robfig/cron v1.2.0 // indirect
+	github.com/robfig/cron v1.2.0
 	github.com/swaggo/files v0.0.0-20190704085106-630677cd5c14
 	github.com/swaggo/gin-swagger v1.2.0
 	github.com/swaggo/swag v1.6.7
 	github.com/urfave/cli/v2 v2.2.0 // indirect
 	golang.org/x/crypto v0.0.0-20201002170205-7f63de1d35b0
 	golang.org/x/net v0.0.0-20200904194848-62affa334b73 // indirect
-	golang.org/x/sys v0.0.0-20201106081118-db71ae66460a // indirect
+	golang.org/x/sys v0.0.0-20201119102817-f84b799fce68 // indirect
 	golang.org/x/tools v0.0.0-20200908211811-12e1bf57a112 // indirect
 	google.golang.org/protobuf v1.25.0 // indirect
 	gorm.io/driver/sqlite v1.1.1

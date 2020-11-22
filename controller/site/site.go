@@ -225,6 +225,45 @@ func GetSiteRewrite(c *gin.Context) {
 	}, c)
 }
 
+// UpdateSiteRewrite 更新伪静态
+func UpdateSiteRewrite(c *gin.Context) {
+	var R request.Site
+	_ = c.ShouldBindJSON(&R)
+
+	info, _ := model.GetSiteInfo(R.ID)
+
+	siteInfo := info.(request.Site)
+
+	// 数据异常
+	if siteInfo.ID == 0 {
+		response.FailWithMessage("获取数据失败", c)
+	}
+
+	// 获取原始的conf数据
+	newDomain := tools.DotToUnderline(siteInfo.Domain)
+	rewriteFilePath := global.BASEPATH + "config/nginx/rewrite/" + newDomain + ".conf"
+	rewriteOldText := tools.ReadFile(rewriteFilePath)
+
+	if R.RewriteConf != rewriteOldText {
+		// 先把旧的存入数据库 然后检测是否配置正确
+		tools.WriteFile(rewriteFilePath, R.HostConf)
+		checkNginx := tools.ExecLinuxCommandReturn("docker exec nginx nginx -t")
+		checkNginxOk := strings.Contains(checkNginx, "successful")
+
+		if checkNginxOk == false {
+			// 重新还原数据到文件
+			tools.WriteFile(rewriteFilePath, rewriteOldText)
+			response.FailWithMessage(checkNginx[:strings.Index(checkNginx, "\n")], c)
+			return
+		}
+
+		// 运行nginx -s 命令
+		tools.ExecLinuxCommandReturn("docker exec nginx nginx -s reload")
+	}
+
+	response.OkWithData("success", c)
+}
+
 // GetSitePhp 获取PHP版本
 func GetSitePhp(c *gin.Context) {
 	id := c.Query("id")

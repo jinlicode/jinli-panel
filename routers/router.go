@@ -36,7 +36,7 @@ func InitRouter() *gin.Engine {
 		v1.POST("/site/update_conf", site.UpdateSiteConf)
 
 		v1.GET("/site/get_rewrite", site.GetSiteRewrite)
-		// v1.POST("/site/update_rewrite", site.UpdateSiteRewrite)
+		v1.POST("/site/update_rewrite", site.UpdateSiteRewrite)
 
 		v1.GET("/site/get_php", site.GetSitePhp)
 		// v1.POST("/site/update_php", site.UpdateSitePhp)
