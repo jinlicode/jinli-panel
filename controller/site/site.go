@@ -389,9 +389,9 @@ func UpdateSiteBasepath(c *gin.Context) {
 	reg := regexp.MustCompile(`(\s*root\s*\$base)(.*);`)
 	BasepathSilce := reg.FindStringSubmatch(confText)
 
-	fmt.Println(BasepathSilce[0])
-	fmt.Println(BasepathSilce[1])
-	fmt.Println(BasepathSilce[2])
+	if R.Basepath == "/" {
+		R.Basepath = ""
+	}
 
 	confText = strings.Replace(confText, BasepathSilce[0], BasepathSilce[1]+R.Basepath+";", -1)
 
