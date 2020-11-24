@@ -355,6 +355,7 @@ export default {
       } else if (status === 'basepath') {
         getSiteBasepath(row.id).then(response => {
           this.dialogBasepathVisible = true
+          this.basepath = response.data.basepath
           this.basepathData = response.data.list
           this.dialogStatus = status
           this.listLoading = false

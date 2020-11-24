@@ -2,6 +2,7 @@ package site
 
 import (
 	"fmt"
+	"regexp"
 	"strconv"
 	"strings"
 
@@ -283,6 +284,11 @@ func GetSitePhp(c *gin.Context) {
 	}, c)
 }
 
+// UpdateSitePhp 更新php版本
+func UpdateSitePhp(c *gin.Context) {
+
+}
+
 // GetSiteDomain 获取所有的绑定域名
 func GetSiteDomain(c *gin.Context) {
 	id := c.Query("id")
@@ -323,12 +329,88 @@ func GetSiteBasepath(c *gin.Context) {
 	}
 
 	newDomain := tools.DotToUnderline(siteInfo.Domain)
+	confText := tools.ReadFile(global.BASEPATH + "config/nginx/" + newDomain + ".conf")
 
 	//获取当前所有的目录的切片
 	DirListSlice := tools.GetPathFiles(global.BASEPATH+"code/"+newDomain, true)
+	for k, v := range DirListSlice {
+		DirListSlice[k] = "/" + v
+	}
+
 	DirListSlice = append(DirListSlice, "/")
 
-	response.OkWithData(resp.PageResult{
-		List: DirListSlice,
+	type Result struct {
+		Basepath string      `json:"basepath"`
+		List     interface{} `json:"list"`
+	}
+
+	//返回第一个匹配的字符串的首末位置
+	reg := regexp.MustCompile(`\s*root\s*\$base(.*);`)
+	Basepath := "/"
+
+	BasepathSilce := reg.FindStringSubmatch(confText)
+
+	if len(BasepathSilce) >= 2 && BasepathSilce[1] != "" {
+		Basepath = BasepathSilce[1]
+	}
+
+	response.OkWithData(Result{
+		Basepath: Basepath,
+		List:     DirListSlice,
 	}, c)
+}
+
+// UpdateSiteBasepath 更新根目录
+func UpdateSiteBasepath(c *gin.Context) {
+
+	type Data struct {
+		ID       int    `json:"id"`
+		Basepath string `json:"basepath"`
+	}
+
+	var R Data
+	_ = c.ShouldBindJSON(&R)
+
+	info, _ := model.GetSiteInfo(R.ID)
+	siteInfo := info.(request.Site)
+
+	// 数据异常
+	if siteInfo.ID == 0 {
+		response.FailWithMessage("获取数据失败", c)
+	}
+
+	// 获取原始的conf数据
+	newDomain := tools.DotToUnderline(siteInfo.Domain)
+	hostConfFilePath := global.BASEPATH + "config/nginx/" + newDomain + ".conf"
+
+	confText := tools.ReadFile(hostConfFilePath)
+	confOldText := confText
+
+	reg := regexp.MustCompile(`(\s*root\s*\$base)(.*);`)
+	BasepathSilce := reg.FindStringSubmatch(confText)
+
+	fmt.Println(BasepathSilce[0])
+	fmt.Println(BasepathSilce[1])
+	fmt.Println(BasepathSilce[2])
+
+	confText = strings.Replace(confText, BasepathSilce[0], BasepathSilce[1]+R.Basepath+";", -1)
+
+	if confText != confOldText {
+		// 检测是否配置正确
+		tools.WriteFile(hostConfFilePath, confText)
+		checkNginx := tools.ExecLinuxCommandReturn("docker exec nginx nginx -t")
+		checkNginxOk := strings.Contains(checkNginx, "successful")
+
+		if checkNginxOk == false {
+			// 重新还原数据到文件
+			tools.WriteFile(hostConfFilePath, confOldText)
+			response.FailWithMessage(checkNginx[:strings.Index(checkNginx, "\n")], c)
+			return
+		}
+
+		// 运行nginx -s 命令
+		tools.ExecLinuxCommandReturn("docker exec nginx nginx -s reload")
+	}
+
+	response.OkWithData("success", c)
 }

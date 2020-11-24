@@ -5,7 +5,7 @@ go 1.15
 require (
 	github.com/LyricTian/gzip v0.1.1
 	github.com/alecthomas/template v0.0.0-20190718012654-fb15b899a751
-	github.com/cosmtrek/air v1.12.2 // indirect
+	github.com/cosmtrek/air v1.15.1 // indirect
 	github.com/cpuguy83/go-md2man/v2 v2.0.0 // indirect
 	github.com/creack/pty v1.1.11 // indirect
 	github.com/fatih/color v1.10.0 // indirect
