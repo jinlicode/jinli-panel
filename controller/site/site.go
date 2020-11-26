@@ -314,6 +314,86 @@ func GetSiteDomain(c *gin.Context) {
 	}
 }
 
+// UpdateSiteDomain 更新绑定域名
+func UpdateSiteDomain(c *gin.Context) {
+
+	type updateDomain struct {
+		ID   int    `json:"id"`
+		Text string `json:"text"`
+	}
+
+	var R updateDomain
+	_ = c.ShouldBindJSON(&R)
+
+	info, _ := model.GetSiteInfo(R.ID)
+	siteInfo := info.(request.Site)
+
+	// 数据异常
+	if siteInfo.ID == 0 {
+		response.FailWithMessage("获取数据失败", c)
+	}
+
+	textDomain := R.Text
+	domainString := strings.ReplaceAll(textDomain, "\t", "")
+
+	// 获取原始的conf数据
+	newDomain := tools.DotToUnderline(siteInfo.Domain)
+	hostConfFilePath := global.BASEPATH + "config/nginx/" + newDomain + ".conf"
+
+	confText := tools.ReadFile(hostConfFilePath)
+	confOldText := confText
+
+	reg := regexp.MustCompile(`server_name\s*(.*);`)
+	confSilce := reg.FindStringSubmatch(confText)
+
+	domainSilce := strings.Split(domainString, "\n")
+
+	// 获取数据库所有的域名
+	_, domainList := model.GetSiteDomainAllList()
+
+	// 获取所有的存在的域名map
+	domainListMap := make(map[string]int)
+	for k, v := range domainList.([]request.Domain) {
+		domainListMap[v.Name] = k
+	}
+
+	newDomainTemp := ""
+	for _, v := range domainSilce {
+		newDomainTemp = strings.TrimSpace(v)
+
+		if _, ok := domainListMap[newDomainTemp]; ok {
+			fmt.Println("域名已存在")
+			response.FailWithMessage(newDomainTemp+"域名已存在", c)
+			return
+		}
+
+		if tools.CheckDomain(newDomainTemp) == false {
+			response.FailWithMessage(newDomainTemp+"域名格式不正确", c)
+			return
+		}
+	}
+
+	//通过之后更改域名conf文件
+	confText = strings.Replace(confText, confSilce[0], strings.TrimRight(confSilce[0], ";")+" "+strings.Trim(fmt.Sprint(domainSilce), "[]")+";", -1)
+
+	if confText != confOldText {
+		// 检测是否配置正确
+		tools.WriteFile(hostConfFilePath, confText)
+		checkNginx := tools.ExecLinuxCommandReturn("docker exec nginx nginx -t")
+		checkNginxOk := strings.Contains(checkNginx, "successful")
+
+		if checkNginxOk == false {
+			// 重新还原数据到文件
+			tools.WriteFile(hostConfFilePath, confOldText)
+			response.FailWithMessage(checkNginx[:strings.Index(checkNginx, "\n")], c)
+			return
+		}
+
+		// 运行nginx -s 命令
+		tools.ExecLinuxCommandReturn("docker exec nginx nginx -s reload")
+	}
+}
+
 // GetSiteBasepath 获取网站所有目录
 func GetSiteBasepath(c *gin.Context) {
 	id := c.Query("id")

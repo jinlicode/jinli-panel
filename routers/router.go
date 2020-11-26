@@ -42,7 +42,7 @@ func InitRouter() *gin.Engine {
 		v1.POST("/site/update_php", site.UpdateSitePhp)
 
 		v1.GET("/site/get_domain", site.GetSiteDomain)
-		// v1.POST("/site/update_domain", site.UpdateSiteDomain)
+		v1.POST("/site/update_domain", site.UpdateSiteDomain)
 		// v1.POST("/site/del_domain", site.DelSiteDomain)
 
 		v1.GET("/site/get_basepath", site.GetSiteBasepath)

@@ -67,6 +67,13 @@ func GetSiteDomainList(siteid int) (err error, list interface{}) {
 	return err, domain
 }
 
+// GetSiteDomainAllList
+func GetSiteDomainAllList() (err error, list interface{}) {
+	var domain []request.Domain
+	err = db.Find(&domain).Error
+	return err, domain
+}
+
 // SetSiteInfoByID 通过id修改site内容
 func SetSiteInfoByID(siteid int, field string, saveData string) (err error) {
 	site := request.Site{ID: siteid}
