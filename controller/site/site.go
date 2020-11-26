@@ -5,6 +5,7 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/jinlicode/jinli-panel/Template"
@@ -357,12 +358,13 @@ func UpdateSiteDomain(c *gin.Context) {
 		domainListMap[v.Name] = k
 	}
 
+	var domain []request.Domain
+
 	newDomainTemp := ""
 	for _, v := range domainSilce {
 		newDomainTemp = strings.TrimSpace(v)
 
 		if _, ok := domainListMap[newDomainTemp]; ok {
-			fmt.Println("域名已存在")
 			response.FailWithMessage(newDomainTemp+"域名已存在", c)
 			return
 		}
@@ -371,6 +373,12 @@ func UpdateSiteDomain(c *gin.Context) {
 			response.FailWithMessage(newDomainTemp+"域名格式不正确", c)
 			return
 		}
+
+		domain = append(domain, request.Domain{
+			Pid:     siteInfo.ID,
+			Name:    newDomainTemp,
+			Addtime: time.Now().Format("2006-01-02 15:04:05"),
+		})
 	}
 
 	//通过之后更改域名conf文件
@@ -392,6 +400,11 @@ func UpdateSiteDomain(c *gin.Context) {
 		// 运行nginx -s 命令
 		tools.ExecLinuxCommandReturn("docker exec nginx nginx -s reload")
 	}
+
+	// 入库
+	model.CreateSiteDomain(domain)
+	response.OkWithData("success", c)
+
 }
 
 // GetSiteBasepath 获取网站所有目录

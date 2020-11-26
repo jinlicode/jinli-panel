@@ -60,6 +60,12 @@ func GetSiteInfo(siteid int) (list interface{}, err error) {
 	return site, err
 }
 
+// CreateSite
+func CreateSiteDomain(domainSilce []request.Domain) (err error) {
+	err = db.Create(&domainSilce).Error
+	return err
+}
+
 // GetSiteDomainList
 func GetSiteDomainList(siteid int) (err error, list interface{}) {
 	var domain []request.Domain
