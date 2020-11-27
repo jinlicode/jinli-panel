@@ -5,11 +5,13 @@ const user = require('./user')
 const role = require('./role')
 const site = require('./site')
 const database = require('./database')
+const soft = require('./soft')
 
 const mocks = [
   ...user,
   ...role,
   ...database,
+  ...soft,
   ...site
 ]
 

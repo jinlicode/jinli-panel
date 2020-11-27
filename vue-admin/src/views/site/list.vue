@@ -30,9 +30,10 @@
           <span>/var/jinli_panel/code/{{ row.domain }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="状态" class-name="status-col" width="80">
+      <el-table-column label="状态" class-name="status-col" width="100">
         <template slot-scope="{row}">
-          <el-tag>
+          <el-tag @click="handleUpdate(row, 'status')">
+            <i v-if="row.status === 0" class="el-icon-loading" />
             {{ row.status | statusFilter }}
           </el-tag>
         </template>
@@ -166,22 +167,10 @@
 </template>
 
 <script>
-import { fetchList, createSite, deleteSite, getSiteConf, updateSiteConf, getSiteRewrite, updateSiteRewrite, getSitePhp, updateSitePhp, getSiteDomain, updateSiteDomain, delSiteDomain, getSiteBasepath, updateSiteBasepath } from '@/api/site'
+import { fetchList, createSite, deleteSite, getSiteConf, updateSiteConf, getSiteRewrite, updateSiteRewrite, getSitePhp, updateSitePhp, getSiteDomain, updateSiteDomain, delSiteDomain, getSiteBasepath, updateSiteBasepath, updateSiteStatus } from '@/api/site'
+import { getPHPList } from '@/api/soft'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
 import { validDomain, validEmail } from '@/utils/validate'
-
-const phpVersionOptions = [
-  { key: '5.6', display_name: 'php-5.6' },
-  { key: '5.6-sec', display_name: 'php-5.6 安全版本' },
-  { key: '7.0', display_name: 'php-7.0' },
-  { key: '7.0-sec', display_name: 'php-7.0 安全版本' },
-  { key: '7.1', display_name: 'php-7.1' },
-  { key: '7.1-sec', display_name: 'php-7.1 安全版本' },
-  { key: '7.2', display_name: 'php-7.2' },
-  { key: '7.2-sec', display_name: 'php-7.2 安全版本' },
-  { key: '7.3', display_name: 'php-7.3' },
-  { key: '7.3-sec', display_name: 'php-7.3 安全版本' }
-]
 
 export default {
   name: 'SiteList',
@@ -216,6 +205,7 @@ export default {
       list: null,
       total: 0,
       listLoading: true,
+      loading: null,
       listQuery: {
         page: 1,
         limit: 20,
@@ -225,7 +215,7 @@ export default {
         status: undefined,
         domain: undefined
       },
-      phpVersionOptions,
+      phpVersionOptions: [],
       dataText: '',
       temp: {
         id: undefined,
@@ -273,6 +263,7 @@ export default {
     }
   },
   created() {
+    this.getPhpVersion()
     this.getList()
   },
   methods: {
@@ -318,6 +309,7 @@ export default {
           this.temp.id = 0
           const _that = this
           createSite(this.temp).then(() => {
+            this.openFullLoader()
             this.dialogFormVisible = false
             this.$notify({
               title: 'Success',
@@ -327,6 +319,7 @@ export default {
               onClose: function() {
                 // 从新渲染
                 _that.getList()
+                _that.loading.close()
               }
             })
           })
@@ -335,9 +328,11 @@ export default {
     },
     handleUpdate(row, status) {
       // 加载动画
-      this.listLoading = true
+      const _that = this
+      if (status !== 'status') {
+        this.listLoading = true
+      }
       this.handleId = row.id
-
       if (status === 'conf') {
         getSiteConf(row.id).then(response => {
           this.dialogOptVisible = true
@@ -375,11 +370,60 @@ export default {
           this.dialogStatus = status
           this.listLoading = false
         })
+      } else if (status === 'status') {
+        if (row.status === 1) {
+          this.$confirm('确定暂停网站吗?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+          }).then(() => {
+            _that.openFullLoader()
+            updateSiteStatus({
+              id: row.id
+            }).then((result) => {
+              _that.$notify({
+                title: '提示',
+                message: '暂停成功',
+                type: 'success',
+                duration: 2000,
+                onClose: function() {
+                  // 从新渲染
+                  _that.getList()
+                  _that.loading.close()
+                }
+              })
+            })
+          })
+        } else if (row.status === 2) {
+          this.$confirm('确定启用网站吗?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+          }).then(() => {
+            _that.openFullLoader()
+            updateSiteStatus({
+              id: row.id
+            }).then((result) => {
+              _that.$notify({
+                title: '提示',
+                message: '启用成功',
+                type: 'success',
+                duration: 2000,
+                onClose: function() {
+                  // 从新渲染
+                  _that.getList()
+                  _that.loading.close()
+                }
+              })
+            })
+          })
+        }
       }
     },
     // 更新conf
     updateData(id, dialogStatus) {
       const _that = this
+      _that.openFullLoader()
       if (dialogStatus === 'conf') {
         updateSiteConf({
           id: id,
@@ -389,7 +433,10 @@ export default {
             title: 'Success',
             message: '保存成功',
             type: 'success',
-            duration: 2000
+            duration: 2000,
+            onClose: function() {
+              _that.loading.close()
+            }
           })
         })
       } else if (dialogStatus === 'rewrite') {
@@ -401,7 +448,10 @@ export default {
             title: 'Success',
             message: '保存成功',
             type: 'success',
-            duration: 2000
+            duration: 2000,
+            onClose: function() {
+              _that.loading.close()
+            }
           })
         })
       } else if (dialogStatus === 'php') {
@@ -413,7 +463,10 @@ export default {
             title: 'Success',
             message: '保存成功',
             type: 'success',
-            duration: 2000
+            duration: 2000,
+            onClose: function() {
+              _that.loading.close()
+            }
           })
         })
       } else if (dialogStatus === 'basepath') {
@@ -425,7 +478,10 @@ export default {
             title: 'Success',
             message: '保存成功',
             type: 'success',
-            duration: 2000
+            duration: 2000,
+            onClose: function() {
+              _that.loading.close()
+            }
           })
         })
       } else if (dialogStatus === 'domain') {
@@ -437,7 +493,15 @@ export default {
             title: 'Success',
             message: '保存成功',
             type: 'success',
-            duration: 2000
+            duration: 2000,
+            onClose: function() {
+              _that.dataText = ''
+              getSiteDomain(id).then(response => {
+                _that.dataText = ''
+                _that.domainData = response.data.list
+              })
+              _that.loading.close()
+            }
           })
         })
       }
@@ -445,11 +509,12 @@ export default {
     // 删除站
     delData(row) {
       const _that = this
-      this.$confirm('此操作将永久删除次网站，包含数据库，程序代码', '提示', {
+      this.$confirm('此操作将永久删除此网站，包含数据库，程序代码', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
+        _that.openFullLoader()
         deleteSite({
           id: row.id
         }).then((result) => {
@@ -461,6 +526,7 @@ export default {
             onClose: function() {
               // 从新渲染
               _that.getList()
+              _that.loading.close()
             }
           })
         })
@@ -474,6 +540,7 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
+        _that.openFullLoader()
         delSiteDomain({
           id: row.id
         }).then((result) => {
@@ -484,12 +551,27 @@ export default {
             duration: 2000,
             onClose: function() {
               _that.domainData.splice(index, 1)
+              _that.loading.close()
             }
           })
         })
       })
+    },
+    // 获取php版本
+    getPhpVersion() {
+      getPHPList().then(response => {
+        this.phpVersionOptions = response.data.list
+      })
+    },
+    // 全屏遮罩层
+    openFullLoader() {
+      this.loading = this.$loading({
+        lock: true,
+        text: 'Loading',
+        spinner: 'el-icon-loading',
+        background: 'rgba(0, 0, 0, 0.7)'
+      })
     }
-
   }
 }
 </script>

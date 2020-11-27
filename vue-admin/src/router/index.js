@@ -114,7 +114,7 @@ export const asyncRoutes = [
         path: 'list',
         component: () => import('@/views/site/list'),
         name: 'SiteList',
-        meta: { title: '网站列表', icon: 'list' }
+        meta: { title: '网站', icon: 'list' }
       },
       {
         path: 'delete',
@@ -222,11 +222,40 @@ export const asyncRoutes = [
         path: 'list',
         component: () => import('@/views/database/list'),
         name: 'DatabaseList',
-        meta: { title: '数据库列表', icon: 'list' }
+        meta: { title: '数据库', icon: 'list' }
       }
     ]
   },
-
+  {
+    path: '/soft',
+    component: Layout,
+    redirect: '/soft/list',
+    name: 'Soft',
+    meta: {
+      title: '软件',
+      icon: 'el-icon-s-help'
+    },
+    children: [
+      {
+        path: 'phplist',
+        name: 'phpSoft',
+        meta: { title: '获取php版本', icon: 'edit' },
+        hidden: true
+      },
+      {
+        path: 'install',
+        name: 'InstallSoft',
+        meta: { title: '安装', icon: 'edit' },
+        hidden: true
+      },
+      {
+        path: 'list',
+        component: () => import('@/views/soft/list'),
+        name: 'SoftList',
+        meta: { title: '软件', icon: 'list' }
+      }
+    ]
+  },
   {
     path: '/setting',
     component: Layout,
