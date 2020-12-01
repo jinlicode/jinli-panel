@@ -6,6 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/jinlicode/jinli-panel/global/response"
 	"github.com/jinlicode/jinli-panel/model"
+	"github.com/jinlicode/jinli-panel/model/request"
 	resp "github.com/jinlicode/jinli-panel/model/response"
 	"github.com/jinlicode/jinli-panel/tools"
 )
@@ -66,7 +67,7 @@ func GetSoftList(c *gin.Context) {
 	dockerList, _ := model.GetTaskByTypeList("docker-shell", "1")
 	dockerInstallMap := make(map[string]string)
 
-	for _, v := range dockerList.([]softStruct) {
+	for _, v := range dockerList.([]request.Task) {
 		dockerInstallMap[v.Name] = v.Name
 	}
 
