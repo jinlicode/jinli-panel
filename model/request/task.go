@@ -6,6 +6,7 @@ type Task struct {
 	Type    string `json:"type"`
 	Siteid  int    `json:"siteid"`
 	Name    string `json:"name"`
+	Desc    string `json:"desc"`
 	Status  string `json:"status"`
 	Start   int64  `json:"start"`
 	End     int64  `json:"end"`

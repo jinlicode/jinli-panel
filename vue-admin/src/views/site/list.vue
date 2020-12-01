@@ -56,7 +56,7 @@
       <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="70px" style="width: 400px; margin-left:50px;">
         <el-form-item label="PHP" prop="php_version">
           <el-select v-model="temp.php_version" class="filter-item" placeholder="请选择">
-            <el-option v-for="item in phpVersionOptions" :key="item.key" :label="item.display_name" :value="item.key" />
+            <el-option v-for="item in phpVersionOptions" :key="item.name" :label="item.desc" :value="item.name" />
           </el-select>
         </el-form-item>
         <el-form-item label="域名" prop="domain">
@@ -117,9 +117,9 @@
       <el-select v-model="phpcur" placeholder="请选择">
         <el-option
           v-for="item in phpVersionOptions"
-          :key="item.key"
-          :label="item.display_name"
-          :value="item.key"
+          :key="item.name"
+          :label="item.desc"
+          :value="item.name"
         />
       </el-select>
       <div slot="footer" class="dialog-footer">
@@ -219,7 +219,7 @@ export default {
       dataText: '',
       temp: {
         id: undefined,
-        php_version: '5.6',
+        php_version: '',
         is_ssl: 1,
         domain: '',
         status: 0
@@ -289,7 +289,7 @@ export default {
     resetTemp() {
       this.temp = {
         id: undefined,
-        php_version: '5.6',
+        php_version: '',
         is_ssl: 0,
         status: 0,
         domain: ''

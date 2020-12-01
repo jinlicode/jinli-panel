@@ -2,7 +2,7 @@ const Mock = require('mockjs')
 
 const List = []
 const count = 100
-const phpVersion = ['5.6', '7.0', '7.1', '7.2', '7.3', '5.6-sec', '7.0-sec', '7.1-sec', '7.2-sec', '7.3-sec']
+const phpVersion = ['php:v5.6', 'php:v7.0', 'php:v7.1', 'php:v7.2', 'php:v7.3', 'php:v5.6-sec', 'php:v7.0-sec', 'php:v7.1-sec', 'php:v7.2-sec', 'php:v7.3-sec']
 
 for (let i = 0; i < count; i++) {
   List.push(Mock.mock({
@@ -148,9 +148,9 @@ module.exports = [
         code: 20000,
         data: {
           list: [
-            {"id":1, "name":"www.baidu.com", "pid":1},
-            {"id":2, "name":"www.baidu2.com", "pid":1},
-            {"id":3, "name":"www.baidu3.com", "pid":1},
+            { id: 1, name:"www.baidu.com", pid: 1 },
+            { id: 2, name:"www.baidu2.com", pid: 1 },
+            { id: 3, name:"www.baidu3.com", pid: 1 }
           ]
         }
       }

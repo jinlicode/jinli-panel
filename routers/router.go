@@ -7,6 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/jinlicode/jinli-panel/controller/auth"
 	"github.com/jinlicode/jinli-panel/controller/site"
+	"github.com/jinlicode/jinli-panel/controller/soft"
 	_ "github.com/jinlicode/jinli-panel/docs"
 	"github.com/jinlicode/jinli-panel/middleware"
 	swaggerFiles "github.com/swaggo/files"
@@ -49,6 +50,9 @@ func InitRouter() *gin.Engine {
 		v1.POST("/site/update_basepath", site.UpdateSiteBasepath)
 
 		// v1.POST("/site/update_status", site.UpdateSiteStatus)
+
+		v1.GET("/soft/list", soft.GetSoftList)
+		v1.GET("/soft/phplist", soft.GetPHPList)
 	}
 
 	router.Run("0.0.0.0:9527")

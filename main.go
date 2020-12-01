@@ -6,6 +6,8 @@ import (
 
 	"github.com/jinlicode/jinli-panel/Template"
 	"github.com/jinlicode/jinli-panel/global"
+	"github.com/jinlicode/jinli-panel/model"
+	"github.com/jinlicode/jinli-panel/model/request"
 	"github.com/jinlicode/jinli-panel/routers"
 	"github.com/jinlicode/jinli-panel/tools"
 	"github.com/robfig/cron"
@@ -52,13 +54,6 @@ func main() {
 		//执行安装docker
 		tools.ExecDockerInstall()
 
-		// 后台默认拉基础镜像
-		tools.ExecLinuxCommand("nohup docker pull hub.jinli.plus/jinlicode/mysql:latest > /dev/null 2>&1 & ")
-		tools.ExecLinuxCommand("nohup docker pull hub.jinli.plus/jinlicode/nginx:v1 > /dev/null 2>&1 & ")
-		tools.ExecLinuxCommand("nohup docker pull hub.jinli.plus/jinlicode/memcached:1.6.6 > /dev/null 2>&1 & ")
-		tools.ExecLinuxCommand("nohup docker pull hub.jinli.plus/jinlicode/redis:5.0.9 > /dev/null 2>&1 & ")
-		tools.ExecLinuxCommand("nohup docker pull hub.jinli.plus/jinlicode/phpmyadmin:5.0.2 > /dev/null 2>&1 & ")
-
 		//创建项目目录
 		tools.ExecLinuxCommand("mkdir " + global.BASEPATH)
 		//创建代码目录
@@ -94,14 +89,23 @@ func main() {
 
 		//创建 Nginx 网段
 		tools.ExecLinuxCommand("docker network create nginx_net")
-		//创建nginx
-		tools.ExecLinuxCommand("nohup docker run -d --name nginx --network nginx_net --restart always --env TZ=Asia/Shanghai -p 80:80 -p 443:443 -v " + global.BASEPATH + "config/nginx:/etc/nginx/conf.d -v " + global.BASEPATH + "code:/var/www -v " + global.BASEPATH + "log/nginx:/var/log/nginx -v " + global.BASEPATH + "config/cert:/etc/letsencrypt -v " + global.BASEPATH + "config/rewrite:/etc/nginx/rewrite hub.jinli.plus/jinlicode/nginx:v1 > /dev/null 2>&1 & ")
 
 		//创建 Mysql 网段
 		tools.ExecLinuxCommand("docker network create mysql_net")
 		//自动生成mysql密码
 		mysqlRandPassword := tools.RandomString(16)
-		tools.ExecLinuxCommand("nohup docker run -d --name mysql --network mysql_net --restart always --env TZ=Asia/Shanghai --env MYSQL_ROOT_PASSWORD=" + mysqlRandPassword + "  -p 3306:3306 -v " + global.BASEPATH + "db:/var/lib/mysql -v " + global.BASEPATH + "imput_db:/docker-entrypoint-initdb.d -v " + global.BASEPATH + "config/mysql/my.cnf:/etc/mysql/my.cnf hub.jinli.plus/jinlicode/mysql > /dev/null 2>&1 & ")
+
+		// 后台默认拉基础镜像
+		model.AddTask(request.Task{Name: "docker-nginx", Execstr: " docker run -d --name nginx --network nginx_net --restart always --env TZ=Asia/Shanghai -p 80:80 -p 443:443 -v " + global.BASEPATH + "config/nginx:/etc/nginx/conf.d -v " + global.BASEPATH + "code:/var/www -v " + global.BASEPATH + "log/nginx:/var/log/nginx -v " + global.BASEPATH + "config/cert:/etc/letsencrypt -v " + global.BASEPATH + "config/rewrite:/etc/nginx/rewrite hub.jinli.plus/jinlicode/nginx:v1", Type: "docker-shell"})
+
+		model.AddTask(request.Task{Name: "docker-mysql", Execstr: "docker run -d --name mysql --network mysql_net --restart always --env TZ=Asia/Shanghai --env MYSQL_ROOT_PASSWORD=" + mysqlRandPassword + "  -p 3306:3306 -v " + global.BASEPATH + "db:/var/lib/mysql -v " + global.BASEPATH + "imput_db:/docker-entrypoint-initdb.d -v " + global.BASEPATH + "config/mysql/my.cnf:/etc/mysql/my.cnf hub.jinli.plus/jinlicode/mysql", Type: "docker-shell"})
+
+		model.AddTask(request.Task{Name: "phpmyadmin:5.0.2", Execstr: "docker pull hub.jinli.plus/jinlicode/phpmyadmin:5.0.2", Type: "docker-shell"})
+		model.AddTask(request.Task{Name: "redis:5.0.9", Execstr: "docker pull docker pull hub.jinli.plus/jinlicode/redis:5.0.9", Type: "docker-shell"})
+		model.AddTask(request.Task{Name: "memcached:1.6.6", Execstr: "docker pull docker pull hub.jinli.plus/jinlicode/memcached:1.6.6", Type: "docker-shell"})
+
+		//加入数据库表
+		model.SetConfigMsqlpwd(mysqlRandPassword)
 
 		tools.WriteFile(global.BASEPATH+"install.lock", "installed")
 
@@ -109,7 +113,7 @@ func main() {
 
 	//跑定时任务
 	c := cron.New()
-	c.AddFunc("*/5 * * * * *", func() {
+	c.AddFunc("*/2 * * * * *", func() {
 		tools.RunTask()
 	})
 	c.Start()

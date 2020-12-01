@@ -2,32 +2,34 @@ package tools
 
 import (
 	"github.com/jinlicode/jinli-panel/model"
-	"github.com/jinlicode/jinli-panel/model/request"
 )
+
+var taskRunLogs = "/tmp/taskRunLogs.log"
 
 // RunTask 跑定时任务
 func RunTask() {
 
 	//获取未开始的任务列表
-	waitList, _ := model.GetTaskList("0")
+	waitInfo, _ := model.GetTaskFirst("0")
 
-	for _, taskv := range waitList.([]request.Task) {
+	//设置任务状态为1运行中
+	model.SetTaskStatus(waitInfo.ID, "1")
 
-		//设置任务状态为1运行中
-		model.SetTaskStatus(taskv.ID, "1")
+	// 判断是否是站点
+	if waitInfo.Type == "site-shell" && waitInfo.Execstr != "" {
+		ExecLinuxCommand(waitInfo.Execstr + " &> " + taskRunLogs)
 
-		// 判断是否是
-		if taskv.Type == "shell" && taskv.Execstr != "" {
-			ExecLinuxCommand(taskv.Execstr)
-		}
-
-		if taskv.Siteid > 0 {
+		if waitInfo.Siteid > 0 {
 			//设置网站为运行中
-			model.SetSiteStatus(taskv.Siteid, "1")
+			model.SetSiteStatus(waitInfo.Siteid, "1")
 		}
 
-		//设置任务状态为2已运行
-		model.SetTaskStatus(taskv.ID, "2")
+		// 安装软件
+	} else if waitInfo.Type == "docker-shell" && waitInfo.Execstr != "" {
 
+		ExecLinuxCommand(waitInfo.Execstr + " &> " + taskRunLogs)
 	}
+
+	//设置任务状态为2已运行
+	model.SetTaskStatus(waitInfo.ID, "2")
 }
