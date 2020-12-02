@@ -14,9 +14,10 @@ export function getPHPList() {
   })
 }
 
-export function InstallData() {
+export function InstallData(data) {
   return request({
     url: '/soft/install',
-    method: 'post'
+    method: 'post',
+    data
   })
 }
