@@ -9,6 +9,7 @@ import (
 	"github.com/jinlicode/jinli-panel/model/request"
 	resp "github.com/jinlicode/jinli-panel/model/response"
 	"github.com/jinlicode/jinli-panel/tools"
+	"github.com/jinlicode/jinli-panel/utils"
 )
 
 type softStruct struct {
@@ -119,4 +120,42 @@ func GetPHPList(c *gin.Context) {
 	response.OkWithData(resp.PageResult{
 		List: phplist,
 	}, c)
+}
+
+// InstallSoft 安装镜像
+func InstallSoft(c *gin.Context) {
+	var R softStruct
+	_ = c.ShouldBindJSON(&R)
+
+	SoftVerify := utils.Rules{
+		"Name": {utils.NotEmpty()},
+	}
+
+	SoftVerifyErr := utils.Verify(R, SoftVerify)
+	if SoftVerifyErr != nil {
+		response.FailWithMessage(SoftVerifyErr.Error(), c)
+		return
+	}
+
+	//获取所有的phpMap
+	softMap := make(map[string]softStruct)
+	for _, v := range softlist {
+		softMap[v.Name] = softStruct{
+			Name: v.Name,
+			Desc: v.Desc,
+		}
+	}
+
+	//加入安装队列
+	if _, ok := softMap[R.Name]; ok {
+		model.AddTask(request.Task{
+			Name:    R.Name,
+			Desc:    softMap[R.Name].Desc,
+			Type:    "docker-shell",
+			Execstr: "docker pull hub.jinli.plus/jinlicode/" + R.Name,
+		})
+		response.OkWithData("success", c)
+		return
+	}
+	response.FailWithMessage("软件不存在", c)
 }

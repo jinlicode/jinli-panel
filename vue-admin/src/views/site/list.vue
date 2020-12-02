@@ -1,7 +1,13 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate">
+      <el-button
+        class="filter-item"
+        style="margin-left: 10px;"
+        type="primary"
+        icon="el-icon-edit"
+        @click="handleCreate"
+      >
         新增
       </el-button>
     </div>
@@ -15,86 +21,203 @@
       highlight-current-row
       style="width: 100%;"
     >
-      <el-table-column label="ID" align="center" width="80">
+      <el-table-column
+        label="ID"
+        align="center"
+        width="80"
+      >
         <template slot-scope="{row}">
           <span>{{ row.id }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="网站域名" min-width="150">
+      <el-table-column
+        label="网站域名"
+        min-width="150"
+      >
         <template slot-scope="{row}">
           {{ row.domain }}
         </template>
       </el-table-column>
-      <el-table-column label="网站路径" min-width="200" align="left">
+      <el-table-column
+        label="网站路径"
+        min-width="200"
+        align="left"
+      >
         <template slot-scope="{row}">
           <span>/var/jinli_panel/code/{{ row.domain }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="状态" class-name="status-col" width="100">
+      <el-table-column
+        label="状态"
+        class-name="status-col"
+        width="100"
+      >
         <template slot-scope="{row}">
           <el-tag @click="handleUpdate(row, 'status')">
-            <i v-if="row.status === 0" class="el-icon-loading" />
+            <i
+              v-if="row.status === 0"
+              class="el-icon-loading"
+            />
             {{ row.status | statusFilter }}
           </el-tag>
         </template>
       </el-table-column>
-      <el-table-column fixed="right" label="操作" min-width="460">
+      <el-table-column
+        fixed="right"
+        label="操作"
+        min-width="460"
+      >
         <template slot-scope="scope">
-          <el-button size="small" type="primary" @click="handleUpdate(scope.row, 'conf')">配置文件</el-button>
-          <el-button size="small" type="primary" @click="handleUpdate(scope.row, 'domain')">域名</el-button>
-          <el-button size="small" type="primary" @click="handleUpdate(scope.row, 'rewrite')">伪静态</el-button>
-          <el-button size="small" type="primary" @click="handleUpdate(scope.row, 'php')">PHP</el-button>
-          <el-button size="small" type="primary" @click="handleUpdate(scope.row, 'basepath')">根目录</el-button>
-          <el-button size="small" type="danger" @click="delData(scope.row)">删除</el-button>
+          <el-button
+            size="small"
+            type="primary"
+            @click="handleUpdate(scope.row, 'conf')"
+          >配置文件</el-button>
+          <el-button
+            size="small"
+            type="primary"
+            @click="handleUpdate(scope.row, 'domain')"
+          >域名</el-button>
+          <el-button
+            size="small"
+            type="primary"
+            @click="handleUpdate(scope.row, 'rewrite')"
+          >伪静态</el-button>
+          <el-button
+            size="small"
+            type="primary"
+            @click="handleUpdate(scope.row, 'php')"
+          >PHP</el-button>
+          <el-button
+            size="small"
+            type="primary"
+            @click="handleUpdate(scope.row, 'basepath')"
+          >根目录</el-button>
+          <el-button
+            size="small"
+            type="danger"
+            @click="delData(scope.row)"
+          >删除</el-button>
 
         </template>
       </el-table-column>
     </el-table>
-    <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getList" />
+    <pagination
+      v-show="total>0"
+      :total="total"
+      :page.sync="listQuery.page"
+      :limit.sync="listQuery.limit"
+      @pagination="getList"
+    />
 
-    <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
-      <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="70px" style="width: 400px; margin-left:50px;">
-        <el-form-item label="PHP" prop="php_version">
-          <el-select v-model="temp.php_version" class="filter-item" placeholder="请选择">
-            <el-option v-for="item in phpVersionOptions" :key="item.name" :label="item.desc" :value="item.name" />
+    <el-dialog
+      :title="textMap[dialogStatus]"
+      :visible.sync="dialogFormVisible"
+    >
+      <el-form
+        ref="dataForm"
+        :rules="rules"
+        :model="temp"
+        label-position="left"
+        label-width="70px"
+        style="width: 400px; margin-left:50px;"
+      >
+        <el-form-item
+          label="PHP"
+          prop="php_version"
+        >
+          <el-select
+            v-model="temp.php_version"
+            class="filter-item"
+            placeholder="请选择"
+          >
+            <el-option
+              v-for="item in phpVersionOptions"
+              :key="item.name"
+              :label="item.desc"
+              :value="item.name"
+            />
           </el-select>
         </el-form-item>
-        <el-form-item label="域名" prop="domain">
-          <el-input v-model="temp.domain" placeholder="请输入" />
+        <el-form-item
+          label="域名"
+          prop="domain"
+        >
+          <el-input
+            v-model="temp.domain"
+            placeholder="请输入"
+          />
         </el-form-item>
-        <el-form-item label="协议" prop="is_ssl">
+        <el-form-item
+          label="协议"
+          prop="is_ssl"
+        >
           <el-radio-group v-model="temp.is_ssl">
             <el-radio :label="1">https</el-radio>
             <el-radio :label="0">http</el-radio>
           </el-radio-group>
         </el-form-item>
-        <el-form-item v-if="temp.is_ssl == 1" label="邮箱" prop="email">
-          <el-input v-model="temp.email" placeholder="请输入" />
+        <el-form-item
+          v-if="temp.is_ssl == 1"
+          label="邮箱"
+          prop="email"
+        >
+          <el-input
+            v-model="temp.email"
+            placeholder="请输入"
+          />
         </el-form-item>
       </el-form>
-      <div slot="footer" class="dialog-footer">
+      <div
+        slot="footer"
+        class="dialog-footer"
+      >
         <el-button @click="dialogFormVisible = false">
           取消
         </el-button>
-        <el-button type="primary" @click="createData()">
+        <el-button
+          type="primary"
+          @click="createData()"
+        >
           保存
         </el-button>
       </div>
     </el-dialog>
-    <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogOptVisible">
-      <el-input v-model="dataText" type="textarea" placeholder="请输入内容" :rows="10" />
-      <div slot="footer" class="dialog-footer">
+    <el-dialog
+      :title="textMap[dialogStatus]"
+      :visible.sync="dialogOptVisible"
+    >
+      <el-input
+        v-model="dataText"
+        type="textarea"
+        placeholder="请输入内容"
+        :rows="10"
+      />
+      <div
+        slot="footer"
+        class="dialog-footer"
+      >
         <el-button @click="dialogOptVisible = false">
           取消
         </el-button>
-        <el-button type="primary" @click="updateData(handleId, dialogStatus)">
+        <el-button
+          type="primary"
+          @click="updateData(handleId, dialogStatus)"
+        >
           保存
         </el-button>
       </div>
     </el-dialog>
-    <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogBasepathVisible" width="30%">
+    <el-dialog
+      :title="textMap[dialogStatus]"
+      :visible.sync="dialogBasepathVisible"
+      width="30%"
+    >
       请选择运行根目录：
-      <el-select v-model="basepath" placeholder="请选择">
+      <el-select
+        v-model="basepath"
+        placeholder="请选择"
+      >
         <el-option
           v-for="item in basepathData"
           :key="item"
@@ -102,19 +225,32 @@
         />
       </el-select>
 
-      <div slot="footer" class="dialog-footer">
+      <div
+        slot="footer"
+        class="dialog-footer"
+      >
         <el-button @click="dialogBasepathVisible = false">
           取消
         </el-button>
-        <el-button type="primary" @click="updateData(handleId, dialogStatus)">
+        <el-button
+          type="primary"
+          @click="updateData(handleId, dialogStatus)"
+        >
           保存
         </el-button>
       </div>
     </el-dialog>
 
-    <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogPhpVisible" width="30%">
+    <el-dialog
+      :title="textMap[dialogStatus]"
+      :visible.sync="dialogPhpVisible"
+      width="30%"
+    >
       请选择运行php版本：
-      <el-select v-model="phpcur" placeholder="请选择">
+      <el-select
+        v-model="phpcur"
+        placeholder="请选择"
+      >
         <el-option
           v-for="item in phpVersionOptions"
           :key="item.name"
@@ -122,17 +258,32 @@
           :value="item.name"
         />
       </el-select>
-      <div slot="footer" class="dialog-footer">
+      <div
+        slot="footer"
+        class="dialog-footer"
+      >
         <el-button @click="dialogPhpVisible = false">
           取消
         </el-button>
-        <el-button type="primary" @click="updateData(handleId, dialogStatus)">
+        <el-button
+          type="primary"
+          @click="updateData(handleId, dialogStatus)"
+        >
           保存
         </el-button>
       </div>
     </el-dialog>
-    <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogDomainVisible" width="30%">
-      <el-input v-model="dataText" type="textarea" placeholder="请输入新域名，一行一个" :rows="10" />
+    <el-dialog
+      :title="textMap[dialogStatus]"
+      :visible.sync="dialogDomainVisible"
+      width="30%"
+    >
+      <el-input
+        v-model="dataText"
+        type="textarea"
+        placeholder="请输入新域名，一行一个"
+        :rows="10"
+      />
       <div>
         <el-table
           :key="tableKey"
@@ -145,19 +296,31 @@
               {{ sc.row.name }}
             </template>
           </el-table-column>
-          <el-table-column align="right" label="操作">
+          <el-table-column
+            align="right"
+            label="操作"
+          >
             <template slot-scope="sc">
-              <a href="javascript:;" @click="delSiteDomainHandle(sc.row, sc.$index)">删除</a>
+              <a
+                href="javascript:;"
+                @click="delSiteDomainHandle(sc.row, sc.$index)"
+              >删除</a>
             </template>
           </el-table-column>
         </el-table>
       </div>
 
-      <div slot="footer" class="dialog-footer">
+      <div
+        slot="footer"
+        class="dialog-footer"
+      >
         <el-button @click="dialogDomainVisible = false">
           取消
         </el-button>
-        <el-button type="primary" @click="updateData(handleId, dialogStatus)">
+        <el-button
+          type="primary"
+          @click="updateData(handleId, dialogStatus)"
+        >
           保存
         </el-button>
       </div>
@@ -316,7 +479,7 @@ export default {
               message: '创建成功',
               type: 'success',
               duration: 2000,
-              onClose: function() {
+              onClose() {
                 // 从新渲染
                 _that.getList()
                 _that.loading.close()
@@ -386,7 +549,7 @@ export default {
                 message: '暂停成功',
                 type: 'success',
                 duration: 2000,
-                onClose: function() {
+                onClose() {
                   // 从新渲染
                   _that.getList()
                   _that.loading.close()
@@ -409,7 +572,7 @@ export default {
                 message: '启用成功',
                 type: 'success',
                 duration: 2000,
-                onClose: function() {
+                onClose() {
                   // 从新渲染
                   _that.getList()
                   _that.loading.close()
@@ -434,7 +597,7 @@ export default {
             message: '保存成功',
             type: 'success',
             duration: 2000,
-            onClose: function() {
+            onClose() {
               _that.loading.close()
             }
           })
@@ -449,7 +612,7 @@ export default {
             message: '保存成功',
             type: 'success',
             duration: 2000,
-            onClose: function() {
+            onClose() {
               _that.loading.close()
             }
           })
@@ -464,7 +627,7 @@ export default {
             message: '保存成功',
             type: 'success',
             duration: 2000,
-            onClose: function() {
+            onClose() {
               _that.loading.close()
             }
           })
@@ -479,7 +642,7 @@ export default {
             message: '保存成功',
             type: 'success',
             duration: 2000,
-            onClose: function() {
+            onClose() {
               _that.loading.close()
             }
           })
@@ -494,7 +657,7 @@ export default {
             message: '保存成功',
             type: 'success',
             duration: 2000,
-            onClose: function() {
+            onClose() {
               _that.dataText = ''
               getSiteDomain(id).then(response => {
                 _that.dataText = ''
@@ -523,7 +686,7 @@ export default {
             message: '删除成功',
             type: 'success',
             duration: 2000,
-            onClose: function() {
+            onClose() {
               // 从新渲染
               _that.getList()
               _that.loading.close()
@@ -549,7 +712,7 @@ export default {
             message: '删除成功',
             type: 'success',
             duration: 2000,
-            onClose: function() {
+            onClose() {
               _that.domainData.splice(index, 1)
               _that.loading.close()
             }

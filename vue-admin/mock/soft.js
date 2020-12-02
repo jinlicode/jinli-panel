@@ -60,6 +60,16 @@ module.exports = [
         }
       }
     }
+  },
+  {
+    url: '/soft/install',
+    type: 'post',
+    response: _ => {
+      return {
+        code: 20000,
+        data: 'success'
+      }
+    }
   }
 ]
 

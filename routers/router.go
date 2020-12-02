@@ -53,6 +53,7 @@ func InitRouter() *gin.Engine {
 
 		v1.GET("/soft/list", soft.GetSoftList)
 		v1.GET("/soft/phplist", soft.GetPHPList)
+		v1.POST("/soft/install", soft.InstallSoft)
 	}
 
 	router.Run("0.0.0.0:9527")

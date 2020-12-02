@@ -101,8 +101,8 @@ func main() {
 		model.AddTask(request.Task{Name: "docker-mysql", Execstr: "docker run -d --name mysql --network mysql_net --restart always --env TZ=Asia/Shanghai --env MYSQL_ROOT_PASSWORD=" + mysqlRandPassword + "  -p 3306:3306 -v " + global.BASEPATH + "db:/var/lib/mysql -v " + global.BASEPATH + "imput_db:/docker-entrypoint-initdb.d -v " + global.BASEPATH + "config/mysql/my.cnf:/etc/mysql/my.cnf hub.jinli.plus/jinlicode/mysql", Type: "docker-shell"})
 
 		model.AddTask(request.Task{Name: "phpmyadmin:5.0.2", Execstr: "docker pull hub.jinli.plus/jinlicode/phpmyadmin:5.0.2", Type: "docker-shell"})
-		model.AddTask(request.Task{Name: "redis:5.0.9", Execstr: "docker pull docker pull hub.jinli.plus/jinlicode/redis:5.0.9", Type: "docker-shell"})
-		model.AddTask(request.Task{Name: "memcached:1.6.6", Execstr: "docker pull docker pull hub.jinli.plus/jinlicode/memcached:1.6.6", Type: "docker-shell"})
+		model.AddTask(request.Task{Name: "redis:5.0.9", Execstr: "docker pull hub.jinli.plus/jinlicode/redis:5.0.9", Type: "docker-shell"})
+		model.AddTask(request.Task{Name: "memcached:1.6.6", Execstr: "docker pull hub.jinli.plus/jinlicode/memcached:1.6.6", Type: "docker-shell"})
 
 		//加入数据库表
 		model.SetConfigMsqlpwd(mysqlRandPassword)
