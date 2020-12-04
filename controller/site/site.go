@@ -124,11 +124,11 @@ func CreateSite(c *gin.Context) {
 	shellString := "docker run -d --name " + newDomain + " --network  " + newDomain + "_net --user 10000:10000 --restart unless-stopped --env TZ=Asia/Shanghai -v " + global.BASEPATH + "code/" + newDomain + ":/var/www/" + newDomain + " -v " + global.BASEPATH + "config/php/" + newDomain + "/php.ini:/usr/local/etc/php/php.ini -v " + global.BASEPATH + "config/php/" + newDomain + "/php-fpm.conf:/usr/local/etc/php-fpm.conf -v " + global.BASEPATH + "config/php/" + newDomain + "/www.conf:/usr/local/etc/php-fpm.d/www.conf -v " + global.BASEPATH + "log/openrasp/" + newDomain + ":/opt/rasp/logs/alarm hub.jinli.plus/jinlicode/" + R.PhpVersion + " && docker exec nginx nginx -s reload"
 
 	// 入task
-	// task := request.Task{Name: "", Execstr: shellString, Type: "site-shell", Siteid: siteid}
-	// model.AddTask(task)
+	task := request.Task{Name: "", Execstr: shellString, Type: "site-shell", Siteid: siteid}
+	model.AddTask(task)
 
 	//创建测试网站 执行nginx重启
-	tools.ExecLinuxCommand(shellString)
+	// tools.ExecLinuxCommand(shellString)
 
 	response.OkWithData("success", c)
 
