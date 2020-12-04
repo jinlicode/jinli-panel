@@ -106,17 +106,29 @@ func CreateSite(c *gin.Context) {
 	tools.ExecLinuxCommand("docker network connect " + newDomain + "_net mysql")
 	tools.ExecLinuxCommand("docker network connect " + newDomain + "_net nginx")
 
-	//创建测试网站
-	// tools.ExecLinuxCommand()
+	// 创建对应的mysql数据库
+	configInfo, _ := model.GetConfigInfo()
 
-	//执行nginx重启
-	// tools.ExecLinuxCommand()
+	//加入数据库表
+	dataPwd := tools.RandomString(16)
+	tools.CreateDatabase("mysql", configInfo.Mysqlpwd, newDomain, newDomain, dataPwd)
+
+	// 数据库帐号密码入库
+	model.AddDatabase(request.Database{
+		Pid:      siteid,
+		Name:     newDomain,
+		Username: newDomain,
+		Password: dataPwd,
+	})
 
 	shellString := "docker run -d --name " + newDomain + " --network  " + newDomain + "_net --user 10000:10000 --restart unless-stopped --env TZ=Asia/Shanghai -v " + global.BASEPATH + "code/" + newDomain + ":/var/www/" + newDomain + " -v " + global.BASEPATH + "config/php/" + newDomain + "/php.ini:/usr/local/etc/php/php.ini -v " + global.BASEPATH + "config/php/" + newDomain + "/php-fpm.conf:/usr/local/etc/php-fpm.conf -v " + global.BASEPATH + "config/php/" + newDomain + "/www.conf:/usr/local/etc/php-fpm.d/www.conf -v " + global.BASEPATH + "log/openrasp/" + newDomain + ":/opt/rasp/logs/alarm hub.jinli.plus/jinlicode/" + R.PhpVersion + " && docker exec nginx nginx -s reload"
 
 	// 入task
-	task := request.Task{Name: "", Execstr: shellString, Type: "site-shell", Siteid: siteid}
-	model.AddTask(task)
+	// task := request.Task{Name: "", Execstr: shellString, Type: "site-shell", Siteid: siteid}
+	// model.AddTask(task)
+
+	//创建测试网站 执行nginx重启
+	tools.ExecLinuxCommand(shellString)
 
 	response.OkWithData("success", c)
 
@@ -407,6 +419,11 @@ func UpdateSiteDomain(c *gin.Context) {
 
 }
 
+// DelSiteDomain 删除域名
+func DelSiteDomain(c *gin.Context) {
+	response.OkWithData("success", c)
+}
+
 // GetSiteBasepath 获取网站所有目录
 func GetSiteBasepath(c *gin.Context) {
 	id := c.Query("id")
@@ -505,5 +522,10 @@ func UpdateSiteBasepath(c *gin.Context) {
 		tools.ExecLinuxCommandReturn("docker exec nginx nginx -s reload")
 	}
 
+	response.OkWithData("success", c)
+}
+
+// UpdateSiteStatus 设置网站状态
+func UpdateSiteStatus(c *gin.Context) {
 	response.OkWithData("success", c)
 }

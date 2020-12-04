@@ -14,8 +14,8 @@ func SetConfigMsqlpwd(mysqlpwd string) (err error) {
 }
 
 // GetConfigInfo 获取配置内容
-func GetConfigInfo(configid int) (configInfo interface{}, err error) {
-	config := Config{ID: 1}
+func GetConfigInfo() (configInfo Config, err error) {
+	var config Config
 	err = db.First(&config).Error
 	return config, err
 }

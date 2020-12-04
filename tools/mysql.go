@@ -19,7 +19,7 @@ func MysqlInfo() []string {
 	return databases
 }
 
-//在数据库执行sql语句
+//MysqlQuery 在数据库执行sql语句
 func MysqlQuery(MysqlHost string, MysqlUser string, MysqlPassword string, DatabaseName string, QuerySQL string) {
 	//数据库配置
 
@@ -43,7 +43,7 @@ func MysqlQuery(MysqlHost string, MysqlUser string, MysqlPassword string, Databa
 
 }
 
-//读取数据库内容
+// MysqlGetDatabases 读取数据库内容
 func MysqlGetDatabases(MysqlHost string, MysqlUser string, MysqlPassword string) []string {
 	//数据库配置
 
@@ -85,10 +85,9 @@ func MysqlGetDatabases(MysqlHost string, MysqlUser string, MysqlPassword string)
 }
 
 //CreateDatabase 创建数据库并创建对应的用户
-func CreateDatabase(basepath string, rootPass string, username string, dataName string, dataPwd string) {
+func CreateDatabase(MysqlHost string, rootPass string, username string, dataName string, dataPwd string) {
 
 	//创建数据库
-	MysqlHost := ReadMysqlHost(basepath)
 	MysqlQuery(MysqlHost, "root", rootPass, "mysql", "create database "+dataName+" DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci")
 
 	//先删用户

@@ -44,16 +44,19 @@ func InitRouter() *gin.Engine {
 
 		v1.GET("/site/get_domain", site.GetSiteDomain)
 		v1.POST("/site/update_domain", site.UpdateSiteDomain)
-		// v1.POST("/site/del_domain", site.DelSiteDomain)
+		v1.POST("/site/del_domain", site.DelSiteDomain)
 
 		v1.GET("/site/get_basepath", site.GetSiteBasepath)
 		v1.POST("/site/update_basepath", site.UpdateSiteBasepath)
 
-		// v1.POST("/site/update_status", site.UpdateSiteStatus)
+		v1.POST("/site/update_status", site.UpdateSiteStatus)
 
 		v1.GET("/soft/list", soft.GetSoftList)
 		v1.GET("/soft/phplist", soft.GetPHPList)
 		v1.POST("/soft/install", soft.InstallSoft)
+
+		v1.GET("/database/list", database.GetLists)
+
 	}
 
 	router.Run("0.0.0.0:9527")
