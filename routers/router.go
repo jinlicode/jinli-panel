@@ -6,6 +6,7 @@ import (
 	"github.com/LyricTian/gzip"
 	"github.com/gin-gonic/gin"
 	"github.com/jinlicode/jinli-panel/controller/auth"
+	"github.com/jinlicode/jinli-panel/controller/database"
 	"github.com/jinlicode/jinli-panel/controller/site"
 	"github.com/jinlicode/jinli-panel/controller/soft"
 	_ "github.com/jinlicode/jinli-panel/docs"
