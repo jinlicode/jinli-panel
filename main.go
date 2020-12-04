@@ -24,6 +24,9 @@ func main() {
 	// 检测锦鲤面板 安装目录
 	if tools.CheckFileExist(global.BASEPATH+"install.lock") == false {
 
+		//执行安装docker
+		tools.ExecDockerInstall()
+
 		portError := ""
 		// 检测80 443端口
 		isPort80 := tools.PortInUse(80)
@@ -50,9 +53,6 @@ func main() {
 			fmt.Println("请先关闭" + portError + "端口，再继续运行锦鲤面板程序")
 			os.Exit(1)
 		}
-
-		//执行安装docker
-		tools.ExecDockerInstall()
 
 		//创建项目目录
 		tools.ExecLinuxCommand("mkdir " + global.BASEPATH)
