@@ -111,7 +111,7 @@ func CreateSite(c *gin.Context) {
 
 	//加入数据库表
 	dataPwd := tools.RandomString(16)
-	tools.CreateDatabase("mysql", configInfo.Mysqlpwd, newDomain, newDomain, dataPwd)
+	tools.CreateDatabase(tools.GetDockerIP("mysql"), configInfo.Mysqlpwd, newDomain, newDomain, dataPwd)
 
 	// 数据库帐号密码入库
 	model.AddDatabase(request.Database{
@@ -150,7 +150,18 @@ func DelSite(c *gin.Context) {
 		return
 	}
 
+	//删记录
 	model.DelSite(R)
+
+	//删除对应的网络
+
+	//删除对应的docker
+
+	//删除对应的程序
+
+	//删除对应的数据库
+
+	//重启nginx
 
 	response.OkWithData("success", c)
 }
@@ -527,5 +538,16 @@ func UpdateSiteBasepath(c *gin.Context) {
 
 // UpdateSiteStatus 设置网站状态
 func UpdateSiteStatus(c *gin.Context) {
+
+	//把配置内容先写入数据库
+
+	//删除配置文件
+
+	//重启nginx
+
+	//把配置内容读入文件
+
+	//重启nginx
+
 	response.OkWithData("success", c)
 }

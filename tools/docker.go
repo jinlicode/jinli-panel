@@ -40,3 +40,31 @@ func GetDockerImages() map[string]string {
 
 	return imagesMaps
 }
+
+// GetDockerIP 获取容器ip
+func GetDockerIP(containersName string) string {
+	httpc := http.Client{
+		Transport: &http.Transport{
+			DialContext: func(_ context.Context, _, _ string) (net.Conn, error) {
+				return net.Dial("unix", sockAddr)
+			},
+		},
+	}
+
+	resp, err := httpc.Get("http://localhost/v1.40/containers/" + containersName + "/json")
+	if err != nil {
+		return ""
+	}
+
+	resp.Header.Set("Content-Type", "application/json")
+
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+
+	dataArr := make(map[string]interface{})
+
+	json.Unmarshal(body, &dataArr)
+
+	IPAddress := dataArr["NetworkSettings"].(map[string]interface{})["Networks"].(map[string]interface{})[containersName+"_net"].(map[string]interface{})["IPAddress"].(string)
+	return IPAddress
+}
