@@ -628,15 +628,66 @@ func UpdateSiteBasepath(c *gin.Context) {
 // UpdateSiteStatus 设置网站状态
 func UpdateSiteStatus(c *gin.Context) {
 
-	//把配置内容先写入数据库
+	var R request.Site
+	_ = c.ShouldBindJSON(&R)
 
-	//删除配置文件
+	SiteVerify := utils.Rules{
+		"ID": {utils.NotEmpty()},
+	}
 
-	//重启nginx
+	SiteVerifyErr := utils.Verify(R, SiteVerify)
+	if SiteVerifyErr != nil {
+		response.FailWithMessage(SiteVerifyErr.Error(), c)
+		return
+	}
 
-	//把配置内容读入文件
+	info, _ := model.GetSiteInfo(R.ID)
 
-	//重启nginx
+	siteInfo := info.(request.Site)
+
+	if siteInfo.ID > 0 {
+
+		if siteInfo.Status == 1 {
+
+			// 获取原始的conf数据
+			newDomain := tools.DotToUnderline(siteInfo.Domain)
+			hostConfPath := global.BASEPATH + "config/nginx/" + newDomain + ".conf"
+			rewriteConfPath := global.BASEPATH + "config/rewrite/" + newDomain + ".conf"
+			hostConf := tools.ReadFile(hostConfPath)
+			rewriteConf := tools.ReadFile(rewriteConfPath)
+
+			//把配置内容先写入数据库
+			model.SetSiteInfoByID(siteInfo.ID, "host_conf", hostConf)
+			model.SetSiteInfoByID(siteInfo.ID, "rewrite_conf", rewriteConf)
+			model.SetSiteStatus(siteInfo.ID, "2")
+
+			//删除配置项
+			tools.ExecLinuxCommand("rm -f " + hostConfPath)
+			tools.ExecLinuxCommand("rm -f " + rewriteConfPath)
+
+			//重启nginx
+			tools.ExecLinuxCommandReturn("docker exec nginx nginx -s reload")
+
+		} else if siteInfo.Status == 2 {
+
+			// 获取原始的conf数据
+			newDomain := tools.DotToUnderline(siteInfo.Domain)
+			hostConfPath := global.BASEPATH + "config/nginx/" + newDomain + ".conf"
+			rewriteConfPath := global.BASEPATH + "config/rewrite/" + newDomain + ".conf"
+
+			//把配置内容先写入数据库
+			model.SetSiteInfoByID(siteInfo.ID, "host_conf", hostConf)
+			model.SetSiteInfoByID(siteInfo.ID, "rewrite_conf", rewriteConf)
+			model.SetSiteStatus(siteInfo.ID, "1")
+
+			//把配置内容读入文件
+			tools.WriteFile(hostConfPath, siteInfo.HostConf)
+			tools.WriteFile(rewriteConfPath, siteInfo.RewriteConf)
+
+			//重启nginx
+			tools.ExecLinuxCommandReturn("docker exec nginx nginx -s reload")
+		}
+	}
 
 	response.OkWithData("success", c)
 }
