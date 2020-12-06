@@ -676,8 +676,6 @@ func UpdateSiteStatus(c *gin.Context) {
 			rewriteConfPath := global.BASEPATH + "config/rewrite/" + newDomain + ".conf"
 
 			//把配置内容先写入数据库
-			model.SetSiteInfoByID(siteInfo.ID, "host_conf", hostConf)
-			model.SetSiteInfoByID(siteInfo.ID, "rewrite_conf", rewriteConf)
 			model.SetSiteStatus(siteInfo.ID, "1")
 
 			//把配置内容读入文件
