@@ -100,3 +100,10 @@ func DelSiteDomain(domainID int) (err error) {
 	err = db.Where("id = ?", domainID).Delete(&domain).Error
 	return err
 }
+
+// DelSiteDomainBySiteID 通过站点id删除所有关联域名
+func DelSiteDomainBySiteID(SiteID int) (err error) {
+	var domain request.Domain
+	err = db.Where("pid = ?", SiteID).Delete(&domain).Error
+	return err
+}

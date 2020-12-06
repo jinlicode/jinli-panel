@@ -150,18 +150,41 @@ func DelSite(c *gin.Context) {
 		return
 	}
 
-	//删记录
+	info, _ := model.GetSiteInfo(R.ID)
+
+	siteInfo := info.(request.Site)
+
+	//删site记录
 	model.DelSite(R)
 
+	//删domain记录
+	model.DelSiteDomainBySiteID(siteInfo.ID)
+
+	newDomain := tools.DotToUnderline(siteInfo.Domain)
+
+	// 同时脱钩mysql网络和nginx网络
+	tools.ExecLinuxCommand("docker network disconnect " + newDomain + "_net mysql")
+	tools.ExecLinuxCommand("docker network disconnect " + newDomain + "_net nginx")
+
 	//删除对应的网络
+	tools.ExecLinuxCommand("docker network rm " + newDomain + "_net")
 
 	//删除对应的docker
+	tools.ExecLinuxCommand("docker stop " + newDomain + " && docker rm " + newDomain)
 
 	//删除对应的程序
+	tools.ExecLinuxCommand("rm -rf " + global.BASEPATH + "code/" + newDomain)
+
+	//删除对应的nginx配置文件 重写文件
+	tools.ExecLinuxCommand("rm -f" + global.BASEPATH + "config/rewrite/" + newDomain + ".conf")
+	tools.ExecLinuxCommand("rm -f" + global.BASEPATH + "config/nginx/" + newDomain + ".conf")
 
 	//删除对应的数据库
+	configInfo, _ := model.GetConfigInfo()
+	tools.MysqlQuery(tools.GetDockerIP("mysql"), "root", configInfo.Mysqlpwd, "mysql", "DROP DATABASE"+newDomain)
 
 	//重启nginx
+	tools.ExecLinuxCommand("docker exec nginx -s reload")
 
 	response.OkWithData("success", c)
 }
