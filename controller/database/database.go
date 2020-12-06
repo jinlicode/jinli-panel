@@ -16,7 +16,7 @@ func GetLists(c *gin.Context) {
 	var pageInfo request.PageInfo
 	_ = c.ShouldBindJSON(&pageInfo)
 
-	err, list, total := model.GetSiteList(pageInfo)
+	err, list, total := model.GetDatabaseList(pageInfo)
 	if err != nil {
 		response.FailWithMessage(fmt.Sprintf("获取数据失败，%v", err), c)
 	} else {

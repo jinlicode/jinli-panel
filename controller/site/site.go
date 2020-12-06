@@ -432,6 +432,66 @@ func UpdateSiteDomain(c *gin.Context) {
 
 // DelSiteDomain 删除域名
 func DelSiteDomain(c *gin.Context) {
+
+	type updateDomain struct {
+		ID   int    `json:"id"`
+		Text string `json:"text"`
+	}
+
+	var R updateDomain
+	_ = c.ShouldBindJSON(&R)
+
+	domainInfo, _ := model.GetSiteDomainInfo(R.ID)
+
+	// 数据异常
+	if domainInfo.ID == 0 {
+		response.FailWithMessage("获取数据失败", c)
+	}
+
+	// 删除当前的域名
+	model.DelSiteDomain(R.ID)
+
+	info, _ := model.GetSiteInfo(domainInfo.Pid)
+	siteInfo := info.(request.Site)
+
+	// 获取原始的conf数据
+	newDomain := tools.DotToUnderline(siteInfo.Domain)
+	hostConfFilePath := global.BASEPATH + "config/nginx/" + newDomain + ".conf"
+
+	confText := tools.ReadFile(hostConfFilePath)
+	confOldText := confText
+
+	reg := regexp.MustCompile(`server_name\s*(.*);`)
+	confSilce := reg.FindStringSubmatch(confText)
+
+	// 获取数据库所有的域名
+	_, domainList := model.GetSiteDomainList(siteInfo.ID)
+
+	// 获取所有的存在的域名map
+	var domainSilce []string
+	for _, v := range domainList.([]request.Domain) {
+		domainSilce = append(domainSilce, v.Name)
+	}
+
+	//通过之后更改域名conf文件
+	confText = strings.Replace(confText, confSilce[1], strings.Trim(fmt.Sprint(domainSilce), "[]"), -1)
+
+	if confText != confOldText {
+		// 检测是否配置正确
+		tools.WriteFile(hostConfFilePath, confText)
+		checkNginx := tools.ExecLinuxCommandReturn("docker exec nginx nginx -t")
+		checkNginxOk := strings.Contains(checkNginx, "successful")
+
+		if checkNginxOk == false {
+			// 重新还原数据到文件
+			tools.WriteFile(hostConfFilePath, confOldText)
+			response.FailWithMessage(checkNginx[:strings.Index(checkNginx, "\n")], c)
+			return
+		}
+
+		// 运行nginx -s 命令
+		tools.ExecLinuxCommandReturn("docker exec nginx nginx -s reload")
+	}
 	response.OkWithData("success", c)
 }
 

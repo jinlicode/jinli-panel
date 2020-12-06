@@ -66,14 +66,14 @@ func CreateSiteDomain(domainSilce []request.Domain) (err error) {
 	return err
 }
 
-// GetSiteDomainList
+// GetSiteDomainList 获取当前网站的域名列表
 func GetSiteDomainList(siteid int) (err error, list interface{}) {
 	var domain []request.Domain
 	err = db.Where("pid = ?", siteid).Find(&domain).Error
 	return err, domain
 }
 
-// GetSiteDomainAllList
+// GetSiteDomainAllList 获取所有的域名列表
 func GetSiteDomainAllList() (err error, list interface{}) {
 	var domain []request.Domain
 	err = db.Find(&domain).Error
@@ -84,5 +84,19 @@ func GetSiteDomainAllList() (err error, list interface{}) {
 func SetSiteInfoByID(siteid int, field string, saveData string) (err error) {
 	site := request.Site{ID: siteid}
 	err = db.Model(&site).Update(field, saveData).Error
+	return err
+}
+
+// GetSiteDomainInfo 获取域名信息
+func GetSiteDomainInfo(domainID int) (list request.Domain, err error) {
+	domain := request.Domain{ID: domainID}
+	err = db.First(&domain).Error
+	return domain, err
+}
+
+// DelSiteDomain 通过id删除域名
+func DelSiteDomain(domainID int) (err error) {
+	var domain request.Domain
+	err = db.Where("id = ?", domainID).Delete(&domain).Error
 	return err
 }
