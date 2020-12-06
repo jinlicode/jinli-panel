@@ -28,3 +28,10 @@ func AddDatabase(info request.Database) (err error) {
 	err = db.Create(&database).Error
 	return err
 }
+
+// DelDatabaseBySiteID
+func DelDatabaseBySiteID(siteID int) (err error) {
+	var database request.Database
+	err = db.Where("pid = ?", siteID).Delete(&database).Error
+	return err
+}
