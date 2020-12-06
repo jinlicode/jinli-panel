@@ -182,6 +182,9 @@ func DelSite(c *gin.Context) {
 	tools.ExecLinuxCommand("rm -f " + global.BASEPATH + "config/rewrite/" + newDomain + ".conf")
 	tools.ExecLinuxCommand("rm -f " + global.BASEPATH + "config/nginx/" + newDomain + ".conf")
 
+	//删除对应的php配置
+	tools.ExecLinuxCommand("rm -rf " + global.BASEPATH + "config/php/" + newDomain)
+
 	//删除对应的数据库
 	configInfo, _ := model.GetConfigInfo()
 	tools.MysqlQuery(tools.GetDockerIP("mysql"), "root", configInfo.Mysqlpwd, "mysql", "DROP DATABASE "+newDomain)
