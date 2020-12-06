@@ -184,7 +184,7 @@ func DelSite(c *gin.Context) {
 
 	//删除对应的数据库
 	configInfo, _ := model.GetConfigInfo()
-	tools.MysqlQuery(tools.GetDockerIP("mysql"), "root", configInfo.Mysqlpwd, "mysql", "DROP DATABASE hahahahaha2")
+	tools.MysqlQuery(tools.GetDockerIP("mysql"), "root", configInfo.Mysqlpwd, "mysql", "DROP DATABASE "+newDomain)
 
 	//重启nginx
 	tools.ExecLinuxCommand("docker exec nginx nginx -s reload")
