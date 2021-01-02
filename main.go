@@ -11,6 +11,8 @@ import (
 	"github.com/jinlicode/jinli-panel/routers"
 	"github.com/jinlicode/jinli-panel/tools"
 	"github.com/robfig/cron"
+
+	_ "./statik"
 )
 
 // @title 锦鲤管理面板

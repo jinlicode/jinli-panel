@@ -1,6 +1,7 @@
 package routers
 
 import (
+	"log"
 	"net/http"
 
 	"github.com/LyricTian/gzip"
@@ -11,18 +12,27 @@ import (
 	"github.com/jinlicode/jinli-panel/controller/soft"
 	_ "github.com/jinlicode/jinli-panel/docs"
 	"github.com/jinlicode/jinli-panel/middleware"
+	"github.com/rakyll/statik/fs"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
+
+	_ "./statik"
 )
 
 func InitRouter() *gin.Engine {
+
+	statikFS, err := fs.New()
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	router := gin.Default()
 	router.Use(gzip.Gzip(gzip.DefaultCompression))
 	router.Use(middleware.TokenAuth())
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	router.StaticFS("/static", http.Dir("./html/static"))
 	router.StaticFile("/favicon.ico", "./html/favicon.ico")
-	router.StaticFile("/", "./html/index.html")
+	router.StaticFile("/", statikFS.open("/index.html"))
 
 	v1 := router.Group("/v1")
 	{
