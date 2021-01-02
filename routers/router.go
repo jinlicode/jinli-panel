@@ -29,7 +29,7 @@ func InitRouter() *gin.Engine {
 	if err != nil {
 		fmt.Println(err.Error())
 	} else {
-		router.StaticFS("/static", statikFS)
+		router.StaticFS("/", statikFS)
 	}
 
 	v1 := router.Group("/v1")
