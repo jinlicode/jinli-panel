@@ -5,6 +5,7 @@ node_modules
 /html/index.html
 /tmp/
 test.go
+statik
 
 # local env files
 .env.local
