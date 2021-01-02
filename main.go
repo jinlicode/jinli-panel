@@ -56,6 +56,8 @@ func main() {
 
 		//创建项目目录
 		tools.ExecLinuxCommand("mkdir " + global.BASEPATH)
+		//创建数据库文件
+		os.Create(global.BASEPATH + "config.db")
 		//创建代码目录
 		tools.ExecLinuxCommand("mkdir " + global.BASEPATH + "code/")
 		//创建各配置项目录
