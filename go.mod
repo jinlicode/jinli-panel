@@ -5,7 +5,7 @@ go 1.15
 require (
 	github.com/LyricTian/gzip v0.1.1
 	github.com/alecthomas/template v0.0.0-20190718012654-fb15b899a751
-	github.com/cosmtrek/air v1.15.1 // indirect
+	github.com/cosmtrek/air v1.21.2 // indirect
 	github.com/cpuguy83/go-md2man/v2 v2.0.0 // indirect
 	github.com/creack/pty v1.1.11 // indirect
 	github.com/fatih/color v1.10.0 // indirect
@@ -30,7 +30,7 @@ require (
 	github.com/urfave/cli/v2 v2.2.0 // indirect
 	golang.org/x/crypto v0.0.0-20201002170205-7f63de1d35b0
 	golang.org/x/net v0.0.0-20200904194848-62affa334b73 // indirect
-	golang.org/x/sys v0.0.0-20201202213521-69691e467435 // indirect
+	golang.org/x/sys v0.0.0-20201231184435-2d18734c6014 // indirect
 	golang.org/x/tools v0.0.0-20200908211811-12e1bf57a112 // indirect
 	google.golang.org/protobuf v1.25.0 // indirect
 	gorm.io/driver/sqlite v1.1.1

@@ -17,6 +17,10 @@ bash dev-vue.sh
 
 注意需要两个窗口，修改代码后会自动编译，不需要再次编译，方便快速开发
 
+### 静态文件编译
+
+需要执行 `~/go/bin/statik -src=./html/`
+
 ### 接口文档地址
 
     http://xxx.com/swagger/index.html
