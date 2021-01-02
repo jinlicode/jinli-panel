@@ -1,8 +1,7 @@
 package routers
 
 import (
-	"log"
-	"net/http"
+	"fmt"
 
 	"github.com/LyricTian/gzip"
 	"github.com/gin-gonic/gin"
@@ -21,18 +20,17 @@ import (
 
 func InitRouter() *gin.Engine {
 
-	statikFS, err := fs.New()
-	if err != nil {
-		log.Fatal(err)
-	}
-
 	router := gin.Default()
 	router.Use(gzip.Gzip(gzip.DefaultCompression))
 	router.Use(middleware.TokenAuth())
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
-	router.StaticFS("/static", http.Dir("./html/static"))
-	router.StaticFile("/favicon.ico", "./html/favicon.ico")
-	router.StaticFile("/", statikFS.open("/index.html"))
+
+	statikFS, err := fs.New()
+	if err != nil {
+		fmt.Println(err.Error())
+	} else {
+		router.StaticFS("/static", statikFS)
+	}
 
 	v1 := router.Group("/v1")
 	{
