@@ -1,0 +1,36 @@
+name: Project Build master
+
+on:
+  push:
+    branches:
+      - "master"
+    paths-ignore:
+      - "README.md"
+
+jobs:
+  buildx:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+      
+      - name: Node intsll
+        uses: actions/setup-node@v1
+        with:
+          node-version: 12.x
+      - run: cd vue-admin && yarn
+      - run: cd vue-admin && yarn build
+
+      - name: Go build
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.15
+      - run: CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags "-s -w"
+
+      - name: Run UPX
+        uses: crazy-max/ghaction-upx@v1
+        with:
+          version: latest
+          file: jinli-panel
+          args: -fq9 --brute
+
