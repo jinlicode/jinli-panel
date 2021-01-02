@@ -16,7 +16,7 @@ import (
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 
-	_ "./statik"
+	_ "./statik/statik"
 )
 
 func InitRouter() *gin.Engine {
