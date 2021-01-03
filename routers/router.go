@@ -12,8 +12,6 @@ import (
 	_ "github.com/jinlicode/jinli-panel/docs"
 	"github.com/jinlicode/jinli-panel/middleware"
 	"github.com/rakyll/statik/fs"
-	swaggerFiles "github.com/swaggo/files"
-	ginSwagger "github.com/swaggo/gin-swagger"
 
 	_ "github.com/jinlicode/jinli-panel/statik"
 )
@@ -23,7 +21,7 @@ func InitRouter() *gin.Engine {
 	router := gin.Default()
 	router.Use(gzip.Gzip(gzip.DefaultCompression))
 	router.Use(middleware.TokenAuth())
-	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+	// router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	statikFS, err := fs.New()
 	if err != nil {
