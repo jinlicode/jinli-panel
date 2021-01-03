@@ -21,9 +21,6 @@ import (
 // @license.url https://github.com/jinlicode/jinli-panel/blob/master/LICENSE
 func main() {
 
-	//自动创建db内容
-	model.Init()
-
 	// 检测锦鲤面板 安装目录
 	if tools.CheckFileExist(global.BASEPATH+"install.lock") == false {
 
@@ -59,8 +56,8 @@ func main() {
 
 		//创建项目目录
 		tools.ExecLinuxCommand("mkdir " + global.BASEPATH)
-		//创建数据库文件
-		os.Create(global.BASEPATH + "config.db")
+		//自动创建db内容
+		model.Init()
 		//创建代码目录
 		tools.ExecLinuxCommand("mkdir " + global.BASEPATH + "code/")
 		//创建各配置项目录
