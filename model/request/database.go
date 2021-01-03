@@ -2,7 +2,7 @@ package request
 
 // Database Database
 type Database struct {
-	ID       int    `json:"id"`
+	ID       int    `json:"id" gorm:"primarykey"`
 	Pid      int    `json:"pid"`
 	Name     string `json:"name"`
 	Username string `json:"username"`

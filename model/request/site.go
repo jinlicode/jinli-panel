@@ -2,7 +2,7 @@ package request
 
 // site SiteStruct
 type Site struct {
-	ID          int    `json:"id"`
+	ID          int    `json:"id" gorm:"primarykey"`
 	Domain      string `json:"domain"`
 	Email       string `json:"email"`
 	PhpVersion  string `json:"php_version"`

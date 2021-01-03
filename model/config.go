@@ -2,7 +2,7 @@ package model
 
 // Config  Struct
 type Config struct {
-	ID       int    `json:"id"`
+	ID       int    `json:"id" gorm:"primarykey"`
 	Mysqlpwd string `json:"mysqlpwd"`
 }
 

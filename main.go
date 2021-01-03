@@ -21,6 +21,9 @@ import (
 // @license.url https://github.com/jinlicode/jinli-panel/blob/master/LICENSE
 func main() {
 
+	//自动创建db内容
+	model.Init()
+
 	// 检测锦鲤面板 安装目录
 	if tools.CheckFileExist(global.BASEPATH+"install.lock") == false {
 

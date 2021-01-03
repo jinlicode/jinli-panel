@@ -2,7 +2,7 @@ package request
 
 // Task TaskStruct
 type Task struct {
-	ID      int    `json:"id"`
+	ID      int    `json:"id" gorm:"primarykey"`
 	Type    string `json:"type"`
 	Siteid  int    `json:"siteid"`
 	Name    string `json:"name"`
