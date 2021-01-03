@@ -20,11 +20,11 @@ import (
 // @license.name GNU v3
 // @license.url https://github.com/jinlicode/jinli-panel/blob/master/LICENSE
 func main() {
-	fmt.Println("检测系统环境......")
 	// 检测锦鲤面板 安装目录
 	if tools.CheckFileExist(global.BASEPATH+"install.lock") == false {
 
-		fmt.Println("开始初始化安装......")
+		// 先安装必要的软件
+		tools.ExecInitToolInstall()
 
 		portError := ""
 		// 检测80 443端口
@@ -114,6 +114,9 @@ func main() {
 		tools.WriteFile(global.BASEPATH+"install.lock", "installed")
 
 	}
+
+	//初始化链接db
+	model.InitDbConnt()
 
 	//跑定时任务
 	c := cron.New()

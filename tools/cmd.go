@@ -120,12 +120,18 @@ func ChkDokcerRemove() {
 	ExecLinuxCommand("yum remove -y docker*")
 }
 
-//ExecDockerInstall 执行安装docker操作
-func ExecDockerInstall() {
+// ExecInitToolInstall 先安装需要的工具
+func ExecInitToolInstall() {
 	//安装源
 	ExecLinuxCommand("yum install epel-release -y")
 	//关闭防火墙
 	ExecLinuxCommand("systemctl stop firewalld.service && systemctl disable firewalld.service && setenforce 0 && sed -i 's/SELINUX=enforcing/SELINUX=disabled/' /etc/selinux/config")
+	// 增加必要安装包
+	ExecLinuxCommand("sudo yum install -y curl wget unzip lrzsz lsof")
+}
+
+//ExecDockerInstall 执行安装docker操作
+func ExecDockerInstall() {
 	// step 1: 安装必要的一些系统工具
 	ExecLinuxCommand("sudo yum install -y yum-utils device-mapper-persistent-data lvm2 git epel-*")
 	// Step 2: 添加软件源信息
@@ -136,8 +142,6 @@ func ExecDockerInstall() {
 	ExecLinuxCommand("sudo systemctl start docker")
 	// step 5: 设置开机启动
 	ExecLinuxCommand("sudo systemctl enable docker")
-	// step 6: 增加必要安装包
-	ExecLinuxCommand("sudo yum install -y curl wget unzip lrzsz lsof")
 
 	//设置docker源
 	ExecLinuxCommand("mkdir -p /etc/docker")

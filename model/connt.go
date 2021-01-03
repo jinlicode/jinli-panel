@@ -8,7 +8,7 @@ import (
 
 var db *gorm.DB
 
-func init() {
+func InitDbConnt() {
 	//open a db connection
 	var err error
 	db, err = gorm.Open(sqlite.Open(global.BASEPATH+"config.db"), &gorm.Config{})
