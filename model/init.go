@@ -2,7 +2,7 @@ package model
 
 import "github.com/jinlicode/jinli-panel/model/request"
 
-func Init() {
+func InitDb() {
 	db.AutoMigrate(
 		&request.Database{},
 		&request.Task{},
