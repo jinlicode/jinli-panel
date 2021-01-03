@@ -113,7 +113,19 @@ func main() {
 		//加入数据库表
 		model.SetConfigMsqlpwd(mysqlRandPassword)
 
+		//随机用户名 随机密码
+		userName := tools.RandomString(12)
+		userPassword := tools.RandomString(12)
+		model.AddUser(request.User{Name: userName, Password: userPassword})
+
 		tools.WriteFile(global.BASEPATH+"install.lock", "installed")
+
+		//初始密码打印
+		fmt.Println("********************************************")
+		fmt.Println("访问地址: 服务器ip:9527")
+		fmt.Println("登录用户:" + userName)
+		fmt.Println("登录密码:" + userPassword)
+		fmt.Println("********************************************")
 
 	}
 

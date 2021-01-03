@@ -1,7 +1,6 @@
 package model
 
 import (
-	"fmt"
 	"strconv"
 	"time"
 
@@ -22,7 +21,6 @@ func DoLogin(name string, password string) (int, string) {
 	// 从新生成密码
 	hash, _ := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	encodePW := string(hash)
-	fmt.Println(encodePW)
 
 	// 检测帐号密码是否正确
 	db.First(&user).Scan(&user)
@@ -78,4 +76,18 @@ func Logout(token string) bool {
 // CheckToken 检测token是否过期
 func CheckToken() bool {
 	return true
+}
+
+// AddUser
+func AddUser(info request.User) (err error) {
+
+	hash, _ := bcrypt.GenerateFromPassword([]byte(info.Password), bcrypt.DefaultCost)
+	encodePW := string(hash)
+
+	user := request.User{
+		Name:     info.Name,
+		Password: encodePW,
+	}
+	err = db.Create(&user).Error
+	return err
 }

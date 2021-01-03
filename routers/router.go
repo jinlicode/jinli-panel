@@ -22,6 +22,7 @@ func InitRouter() *gin.Engine {
 	router.Use(gzip.Gzip(gzip.DefaultCompression))
 	router.Use(middleware.TokenAuth())
 	// router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+	gin.SetMode(gin.ReleaseMode)
 
 	statikFS, err := fs.New()
 	if err != nil {
