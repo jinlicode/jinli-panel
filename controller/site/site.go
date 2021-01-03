@@ -80,7 +80,7 @@ func CreateSite(c *gin.Context) {
 	os.Mkdir(global.BASEPATH+"config/php/"+newDomain, 0755)
 
 	//写入404以及index文件到置顶目录
-	tools.WriteFile(global.BASEPATH+"code/"+newDomain+"/index.html", Template.HTMLIndex())
+	tools.WriteFile(global.BASEPATH+"code/"+newDomain+"/index.html", Template.HTMLIndex(R.Domain))
 	tools.WriteFile(global.BASEPATH+"code/"+newDomain+"/404.html", Template.HTML404())
 
 	//创建网站的配置文件到对应的config配置文件中

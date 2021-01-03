@@ -1,7 +1,7 @@
 package Template
 
 //HTMLIndex 创建成功之后的默认index文件内容
-func HTMLIndex() string {
+func HTMLIndex(domain string) string {
 	HTML := `
 <!doctype html>
 <html>
@@ -33,6 +33,7 @@ func HTMLIndex() string {
 <body>
 	<div class="container">
 		<h1>恭喜, 站点创建成功！</h1>
+		<h2>默认域名：` + domain + `</h2>
 		<h3>这是默认index.html，本页面由系统自动生成</h3>
 		<ul>
 			<li>本页面在根目录下的index.html</li>
