@@ -58,8 +58,10 @@ func main() {
 
 		//创建项目目录
 		os.Mkdir(global.BASEPATH, 0755)
-		//自动创建db内容
-		model.InitDb()
+
+		//初始化链接db
+		model.InitDbConnt()
+
 		//创建代码目录
 		os.Mkdir(global.BASEPATH+"code/", 0755)
 		//创建各配置项目录
