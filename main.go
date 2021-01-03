@@ -24,9 +24,6 @@ func main() {
 	// 检测锦鲤面板 安装目录
 	if tools.CheckFileExist(global.BASEPATH+"install.lock") == false {
 
-		//执行安装docker
-		tools.ExecDockerInstall()
-
 		portError := ""
 		// 检测80 443端口
 		isPort80 := tools.PortInUse(80)
@@ -54,34 +51,37 @@ func main() {
 			os.Exit(1)
 		}
 
+		//执行安装docker
+		tools.ExecDockerInstall()
+
 		//创建项目目录
-		tools.ExecLinuxCommand("mkdir " + global.BASEPATH)
+		os.Mkdir(global.BASEPATH, 0755)
 		//自动创建db内容
 		model.Init()
 		//创建代码目录
-		tools.ExecLinuxCommand("mkdir " + global.BASEPATH + "code/")
+		os.Mkdir(global.BASEPATH+"code/", 0755)
 		//创建各配置项目录
-		tools.ExecLinuxCommand("mkdir " + global.BASEPATH + "config/")
-		tools.ExecLinuxCommand("mkdir " + global.BASEPATH + "config/cert/")
-		tools.ExecLinuxCommand("mkdir " + global.BASEPATH + "config/mysql/")
-		tools.ExecLinuxCommand("mkdir " + global.BASEPATH + "config/nginx/")
-		tools.ExecLinuxCommand("mkdir " + global.BASEPATH + "config/php/")
-		tools.ExecLinuxCommand("mkdir " + global.BASEPATH + "config/rewrite/")
+		os.Mkdir(global.BASEPATH+"config/", 0755)
+		os.Mkdir(global.BASEPATH+"config/cert/", 0755)
+		os.Mkdir(global.BASEPATH+"config/mysql/", 0755)
+		os.Mkdir(global.BASEPATH+"config/nginx/", 0755)
+		os.Mkdir(global.BASEPATH+"config/php/", 0755)
+		os.Mkdir(global.BASEPATH+"config/rewrite/", 0755)
 
 		//创建备份目录
-		tools.ExecLinuxCommand("mkdir " + global.BASEPATH + "backup/")
-		tools.ExecLinuxCommand("mkdir " + global.BASEPATH + "backup/database/")
-		tools.ExecLinuxCommand("mkdir " + global.BASEPATH + "backup/site/")
+		os.Mkdir(global.BASEPATH+"backup/", 0755)
+		os.Mkdir(global.BASEPATH+"backup/database/", 0755)
+		os.Mkdir(global.BASEPATH+"backup/site/", 0755)
 
 		//创建自动备份目录
-		tools.ExecLinuxCommand("mkdir " + global.BASEPATH + "autobackup/")
-		tools.ExecLinuxCommand("mkdir " + global.BASEPATH + "autobackup/database/")
-		tools.ExecLinuxCommand("mkdir " + global.BASEPATH + "autobackup/site/")
+		os.Mkdir(global.BASEPATH+"autobackup/", 0755)
+		os.Mkdir(global.BASEPATH+"autobackup/database/", 0755)
+		os.Mkdir(global.BASEPATH+"autobackup/site/", 0755)
 
 		//创建日志目录
-		tools.ExecLinuxCommand("mkdir " + global.BASEPATH + "log/")
-		tools.ExecLinuxCommand("mkdir " + global.BASEPATH + "log/nginx/")
-		tools.ExecLinuxCommand("mkdir " + global.BASEPATH + "log/openrasp/")
+		os.Mkdir(global.BASEPATH+"log/", 0755)
+		os.Mkdir(global.BASEPATH+"log/nginx/", 0755)
+		os.Mkdir(global.BASEPATH+"log/openrasp/", 0755)
 
 		//设置代码目录为 10000,10000
 		tools.ExecLinuxCommand("chown -R 10000:10000 " + global.BASEPATH + "code/")
