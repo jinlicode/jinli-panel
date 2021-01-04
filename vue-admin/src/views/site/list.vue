@@ -429,6 +429,16 @@ export default {
     this.getPhpVersion()
     this.getList()
   },
+  mounted() {
+    this.timer = window.setInterval(() => {
+      setTimeout(() => {
+        this.getList()
+      }, 0)
+    }, 3000)
+  },
+  destroyed() {
+    window.clearInterval(this.timer)
+  },
   methods: {
     getList() {
       this.listLoading = true
