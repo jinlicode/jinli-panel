@@ -70,6 +70,18 @@ func CreateSite(c *gin.Context) {
 		return
 	}
 
+	//检测nginx mysql
+	if tools.CheckDockerStatus("nginx") == false {
+		response.FailWithMessage("nginx服务未启动", c)
+		return
+	}
+
+	//检测nginx mysql
+	if tools.CheckDockerStatus("mysql") == false {
+		response.FailWithMessage("mysql服务未启动", c)
+		return
+	}
+
 	//入库
 	siteid, _ := model.CreateSite(R)
 
