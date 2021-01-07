@@ -37,6 +37,10 @@ sudo systemctl enable docker
 #重载docker
 sudo systemctl daemon-reload && sudo systemctl restart docker
 
+#创建 Nginx 网段
+docker network create nginx_net
+#创建 Mysql 网段
+docker network create mysql_net
 }
 
 ## 公共执行函数
