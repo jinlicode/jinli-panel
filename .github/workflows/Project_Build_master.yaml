@@ -43,3 +43,11 @@ jobs:
           path: jinli-panel
           retention-days: 90
 
+      - name: deploy file to server
+        uses: wlixcc/SFTP-Deploy-Action@v1.0 
+        with:  
+          username: 'root'   #ssh user name
+          server: '${{ secrets.SERVER_IP }}'
+          ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
+          local_path: 'jinli-panel'
+          remote_path: '/var/jinli/code/release_jinli_plus/pre'
