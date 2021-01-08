@@ -1,8 +1,8 @@
 package main
 
 import (
+	"flag"
 	"fmt"
-	"os"
 
 	"github.com/jinlicode/jinli-panel/Template"
 	"github.com/jinlicode/jinli-panel/global"
@@ -20,84 +20,17 @@ import (
 // @license.name GNU v3
 // @license.url https://github.com/jinlicode/jinli-panel/blob/master/LICENSE
 func main() {
+	init := flag.String("init", "", "--init=all")
+	flag.Parse()
 	// 检测锦鲤面板 安装目录
-	if tools.CheckFileExist(global.BASEPATH+"install.lock") == false {
-
-		// 先安装必要的软件
-		tools.ExecInitToolInstall()
-
-		portError := ""
-		// 检测80 443端口
-		isPort80 := tools.PortInUse(80)
-		if isPort80 {
-			portError += "80 "
-		}
-
-		isPort443 := tools.PortInUse(443)
-		if isPort443 {
-			portError += "443 "
-		}
-		// 检测3306端口
-		isPort3306 := tools.PortInUse(3306)
-		if isPort3306 {
-			portError += "3306 "
-		}
-		// 检测9527端口
-		isPort9527 := tools.PortInUse(9527)
-		if isPort9527 {
-			portError += "9527 "
-		}
-
-		if portError != "" {
-			fmt.Println("请先关闭" + portError + "端口，再继续运行锦鲤面板程序")
-			os.Exit(1)
-		}
-
-		//执行安装docker
-		tools.ExecDockerInstall()
-
-		//创建项目目录
-		os.Mkdir(global.BASEPATH, 0755)
+	if *init == "all" && tools.CheckFileExist(global.BASEPATH+"install.lock") == false {
 
 		//初始化链接db
 		model.InitDbConnt()
 
-		//创建代码目录
-		os.Mkdir(global.BASEPATH+"code/", 0755)
-		//创建各配置项目录
-		os.Mkdir(global.BASEPATH+"config/", 0755)
-		os.Mkdir(global.BASEPATH+"config/cert/", 0755)
-		os.Mkdir(global.BASEPATH+"config/mysql/", 0755)
-		os.Mkdir(global.BASEPATH+"config/nginx/", 0755)
-		os.Mkdir(global.BASEPATH+"config/php/", 0755)
-		os.Mkdir(global.BASEPATH+"config/rewrite/", 0755)
-
-		//创建备份目录
-		os.Mkdir(global.BASEPATH+"backup/", 0755)
-		os.Mkdir(global.BASEPATH+"backup/database/", 0755)
-		os.Mkdir(global.BASEPATH+"backup/site/", 0755)
-
-		//创建自动备份目录
-		os.Mkdir(global.BASEPATH+"autobackup/", 0755)
-		os.Mkdir(global.BASEPATH+"autobackup/database/", 0755)
-		os.Mkdir(global.BASEPATH+"autobackup/site/", 0755)
-
-		//创建日志目录
-		os.Mkdir(global.BASEPATH+"log/", 0755)
-		os.Mkdir(global.BASEPATH+"log/nginx/", 0755)
-		os.Mkdir(global.BASEPATH+"log/openrasp/", 0755)
-
-		//设置代码目录为 10000,10000
-		tools.ExecLinuxCommand("chown -R 10000:10000 " + global.BASEPATH + "code/")
-
 		//创建mysql my.cnf
 		tools.WriteFile(global.BASEPATH+"config/mysql/my.cnf", Template.MysqlCnf())
 
-		//创建 Nginx 网段
-		tools.ExecLinuxCommand("docker network create nginx_net")
-
-		//创建 Mysql 网段
-		tools.ExecLinuxCommand("docker network create mysql_net")
 		//自动生成mysql密码
 		mysqlRandPassword := tools.RandomString(16)
 
@@ -120,12 +53,9 @@ func main() {
 
 		tools.WriteFile(global.BASEPATH+"install.lock", "installed")
 
-		//初始密码打印
-		fmt.Println("********************************************")
-		fmt.Println("访问地址: 服务器ip:9527")
-		fmt.Println("登录用户:" + userName)
-		fmt.Println("登录密码:" + userPassword)
-		fmt.Println("********************************************")
+		fmt.Println("|-用户名: " + userName)
+		fmt.Println("|-新密码: " + userPassword)
+		return
 
 	}
 
